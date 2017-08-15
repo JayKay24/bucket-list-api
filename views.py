@@ -52,13 +52,21 @@ class UserListResource(Resource):
         if not request_dict:
             response = {'user': 'No input data provided'}
             return response, status.HTTP_400_BAD_REQUEST
+        try:
+            confirm_password = request_dict['confirm_password']
+            if confirm_password != request_dict['password']:
+                response = {'error': 'Passwords do not match'}
+                return response, status.HTTP_400_BAD_REQUEST
+        except KeyError as e:
+            response = {'error': 'Please confirm your password before registering'}
+            return response, status.HTTP_400_BAD_REQUESTs
         errors = user_schema.validate(request_dict)
         if errors:
             return errors, status.HTTP_400_BAD_REQUEST
         name = request_dict['name']
         existing_user = User.query.filter_by(name=name).first()
         if existing_user is not None:
-            response = {'user': 'A uesr with the same name already exists'}
+            response = {'error': 'A user with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
             user = User(name=name)
