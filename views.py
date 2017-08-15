@@ -34,4 +34,16 @@ class UserResource(AuthRequiredResource):
         result = user_schema.dump(user).data
         return result
 
+class UserListResource(Resource):
+    @auth.login_required
+    def get(self):
+        pagination_helper = PaginationHelper(
+            request,
+            query=User.query,
+            resource_for_url='api.userlistresource',
+            key_name='results',
+            schema=user_schema
+        )
+        result = pagination_helper.paginate_query()
+        return result
 
