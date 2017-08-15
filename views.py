@@ -18,7 +18,7 @@ def verify_user_password(name, password):
     g.user = user
     return True
 
-class AuthenticationResource(Resource):
+class AuthRequiredResource(Resource):
     """
     Restrict resources to authenticated users.
     """
@@ -28,4 +28,10 @@ api_bp = Blueprint('api', __name__)
 user_schema = UserSchema()
 api = Api(api_bp)
 
-class UserResource(Resource):
+class UserResource(AuthRequiredResource):
+    def get(self, id):
+        user = User.query.get_or_404(id)
+        result = user_schema.dump(user).data
+        return result
+
+
