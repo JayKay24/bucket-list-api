@@ -4,19 +4,19 @@ from models import db, User, UserSchema
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
-from flask_httpauth import HTTPTokenAuth
+from flask_jwt import JWT, jwt_required, current_identity
+from werkzeug.security import safe_str_cmp
 from flask import g
 from models import User, UserSchema
 
-auth = HTTPTokenAuth(scheme='Token')
+def authenticate(username, password):
+    user = User.query.filter_by(name=username).first()
+    if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
+        return user
 
-@auth.verify_password
-def verify_user_password(name, password):
-    user = User.query.filter_by(name=name).first()
-    if not user or not user.verify_password(password):
-        return False
-    g.user = user
-    return True
+def identity(payload):
+    user_id = payload['identity']
+    return {'user_id': user_id}
 
 class AuthRequiredResource(Resource):
     """
@@ -59,7 +59,7 @@ class UserListResource(Resource):
                 return response, status.HTTP_400_BAD_REQUEST
         except KeyError as e:
             response = {'error': 'Please confirm your password before registering'}
-            return response, status.HTTP_400_BAD_REQUESTs
+            return response, status.HTTP_400_BAD_REQUEST
         errors = user_schema.validate(request_dict)
         if errors:
             return errors, status.HTTP_400_BAD_REQUEST
