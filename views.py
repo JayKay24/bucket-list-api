@@ -9,7 +9,6 @@ from werkzeug.security import safe_str_cmp
 from flask import g
 from models import User, UserSchema
 
-auth = 
 
 def authenticate(username, password):
     user = User.query.filter_by(name=username).first()
@@ -19,12 +18,6 @@ def authenticate(username, password):
 def identity(payload):
     user_id = payload['identity']
     return {'user_id': user_id}
-
-class AuthRequiredResource(Resource):
-    """
-    Restrict resources to authenticated users.
-    """
-    method_decorators = [auth.login_required]
 
 api_bp = Blueprint('api', __name__)
 user_schema = UserSchema()
@@ -37,7 +30,6 @@ class UserResource(Resource):
         return result
 
 class UserListResource(Resource):
-    @auth.login_required
     def get(self):
         pagination_helper = PaginationHelper(
             request,
