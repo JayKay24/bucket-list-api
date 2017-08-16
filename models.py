@@ -79,3 +79,27 @@ class UserSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     username = fields.String(required=True, validate=validate.Length(3))
     url = ma.URLFor('api.userresource', id='<id>', _external=True)
+
+class BucketList(db.Model, AddUpdateDelete):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id',
+        ondelete='CASCADE'), nullable=False)
+    user = db.relationship('User', backref=db.backref('bucketlists',
+        lazy='dynamic', order_by='BucketList.name'))
+    
+    def __init__(self, name):
+        self.name = name
+
+    @classmethod
+    def is_unique(cls, id, name):
+        existing_bucketlist = cls.query.filter_by(name=name).first()
+        if existing_bucketlist is None:
+            return True
+        else:
+            if existing_bucketlist.id == id:
+                return True
+            else:
+                return False
+
+     
