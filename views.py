@@ -23,7 +23,7 @@ def identity(payload):
     user_id = payload['identity']
     return {'user_id': user_id}
 
-api_bp = Blueprint('api/v1', __name__)
+api_bp = Blueprint('api', __name__)
 jwt = JWT(api_bp, authenticate, identity)
 user_schema = UserSchema()
 api = Api(api_bp)
