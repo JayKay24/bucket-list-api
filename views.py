@@ -35,6 +35,7 @@ class UserResource(Resource):
         return result
 
 class UserListResource(Resource):
+    @jwt_required()
     def get(self):
         """
         Retrieves a paginated result set of users.
@@ -89,5 +90,5 @@ class UserListResource(Resource):
             resp = {'error': str(e)}
             return resp, status.HTTP_400_BAD_REQUEST
 
-api.add_resource(UserListResource, '/users/')
+api.add_resource(UserListResource, '/register/')
 api.add_resource(UserResource, '/users/<int:id>')
