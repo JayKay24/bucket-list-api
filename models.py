@@ -104,4 +104,6 @@ class BucketList(db.Model, AddUpdateDelete):
 
 class BucketListSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
-    bkt_name
+    bkt_name = fields.String(required=True, validate=validate.Length(3))
+    url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
+    
