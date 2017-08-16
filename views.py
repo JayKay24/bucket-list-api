@@ -4,7 +4,7 @@ from models import db, User, UserSchema
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
-from flask_jwt import JWT, jwt_required, current_identity
+from flask_jwt import JWT, jwt_required
 from werkzeug.security import safe_str_cmp
 from flask import g
 from models import User, UserSchema
@@ -24,6 +24,7 @@ def identity(payload):
     return {'user_id': user_id}
 
 api_bp = Blueprint('api/v1', __name__)
+jwt = JWT(api_bp, authenticate, identity)
 user_schema = UserSchema()
 api = Api(api_bp)
 
