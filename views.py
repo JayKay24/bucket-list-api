@@ -31,6 +31,9 @@ class UserResource(Resource):
 
 class UserListResource(Resource):
     def get(self):
+        """
+        Retrieves a paginated result set of users.
+        """
         pagination_helper = PaginationHelper(
             request,
             query=User.query,
