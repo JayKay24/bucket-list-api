@@ -9,6 +9,8 @@ from werkzeug.security import safe_str_cmp
 from flask import g
 from models import User, UserSchema
 
+auth = 
+
 def authenticate(username, password):
     user = User.query.filter_by(name=username).first()
     if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
@@ -28,7 +30,7 @@ api_bp = Blueprint('api', __name__)
 user_schema = UserSchema()
 api = Api(api_bp)
 
-class UserResource(AuthRequiredResource):
+class UserResource(Resource):
     def get(self, id):
         user = User.query.get_or_404(id)
         result = user_schema.dump(user).data
