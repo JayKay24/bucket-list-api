@@ -92,8 +92,8 @@ class BucketList(db.Model, AddUpdateDelete):
         self.bkt_name = bkt_name
 
     @classmethod
-    def is_unique(cls, id, name):
-        existing_bucketlist = cls.query.filter_by(name=name).first()
+    def is_unique(cls, id, bkt_name):
+        existing_bucketlist = cls.query.filter_by(bkt_name=bkt_name).first()
         if existing_bucketlist is None:
             return True
         else:
@@ -106,4 +106,5 @@ class BucketListSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     bkt_name = fields.String(required=True, validate=validate.Length(3))
     url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
-    
+
+

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource
-from models import db, User, UserSchema
+from models import db, User, UserSchema, BucketList, BucketListSchema
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
@@ -24,6 +24,7 @@ def identity(payload):
 
 api_bp = Blueprint('api', __name__)
 user_schema = UserSchema()
+bucketlist_schema = BucketListSchema()
 api = Api(api_bp)
 
 class UserResource(Resource):
@@ -88,6 +89,48 @@ class UserListResource(Resource):
             resp = {'error': str(e)}
             return resp, status.HTTP_400_BAD_REQUEST
 
+class BucketListResource(Resource):
+    def get(self, id):
+        bucketlist = BucketList.query.get_or_404(id)
+        result = bucketlist_schema.dump(bucketlist).data
+        return result
+
+    def patch(self, id):
+        bucketlist = BucketList.query.get_or_404(id)
+        bucketlist_dict = request.get_json(force=True)
+        if 'bkt_name' in bucketlist_dict:
+            bucketlist_bucketlist = bucketlist_dict['bkt_name']
+            if BucketList.is_unique(id=id, bkt_name=bucketlist_bucketlist):
+                bucketlist.bkt_name = bucketlist_bucketlist
+            else:
+                response = {'error': 'A bucketlist with the same name already exists'}
+                return response, status.HTTP_400_BAD_REQUEST
+        dumped_bucketlist, dump_errors = bucketlist_schema.dump(bucketlist)
+        if dump_errors:
+            return dump_errors, status.HTTP_400_BAD_REQUEST
+        validate_errors = bucketlist_schema.validate(dumped_bucketlist)
+        if validate_errors:
+            return validate_errors, status.HTTP_400_BAD_REQUEST
+
+        try:
+            bucketlist.update()
+            return self.get(id)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            resp = jsonify({"error": str(e)})
+            return resp, status.HTTP_400_BAD_REQUEST
+
+    def delete(self, id):
+        bucketlist = BucketList.query.get_or_404(id)
+        try:
+            delete = bucketlist.delete(bucketlist)
+            response = make_response()
+            return response, status.HTTP_204_NO_CONTENT
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            resp = jsonify({"error": str(e)})
+            return resp, status.HTTP_401_UNAUTHORIZED
+
 api.add_resource(UserListResource, '/register/')
-api.add_resource(UserListResource, '/users/')
 api.add_resource(UserResource, '/users/<int:id>')
+api.add_resource(BucketListResource, '/bucketlists/<int:id>')
