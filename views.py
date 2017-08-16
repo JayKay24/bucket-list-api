@@ -45,6 +45,9 @@ class UserListResource(Resource):
         return result
 
     def post(self):
+        """
+        Verify and register a new user.
+        """
         request_dict = request.get_json()
         if not request_dict:
             response = {'user': 'No input data provided'}
