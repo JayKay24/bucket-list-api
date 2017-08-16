@@ -61,8 +61,8 @@ class User(db.Model, AddUpdateDelete):
             return 'Please enter a valid email address', False
         return '', True
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, username):
+        self.username = username
 
     @classmethod
     def is_unique(cls, id, name):
