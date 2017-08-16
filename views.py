@@ -67,13 +67,13 @@ class UserListResource(Resource):
         errors = user_schema.validate(request_dict)
         if errors:
             return errors, status.HTTP_400_BAD_REQUEST
-        name = request_dict['name']
-        existing_user = User.query.filter_by(name=name).first()
+        username = request_dict['username']
+        existing_user = User.query.filter_by(username=username).first()
         if existing_user is not None:
             response = {'error': 'A user with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
-            user = User(name=name)
+            user = User(username=username)
             error_message, password_ok = \
             user.check_password_strength_and_hash_if_ok(request_dict['password'])
             if password_ok:
