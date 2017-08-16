@@ -90,11 +90,13 @@ class UserListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
 class BucketListResource(Resource):
+    @jwt_required()
     def get(self, id):
         bucketlist = BucketList.query.get_or_404(id)
         result = bucketlist_schema.dump(bucketlist).data
         return result
 
+    @jwt_required()
     def patch(self, id):
         bucketlist = BucketList.query.get_or_404(id)
         bucketlist_dict = request.get_json(force=True)
@@ -120,6 +122,7 @@ class BucketListResource(Resource):
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
 
+    @jwt_required()
     def delete(self, id):
         bucketlist = BucketList.query.get_or_404(id)
         try:
