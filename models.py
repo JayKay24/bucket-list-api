@@ -82,14 +82,14 @@ class UserSchema(ma.Schema):
 
 class BucketList(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150), unique=True, nullable=False)
+    bkt_name = db.Column(db.String(150), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id',
         ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('bucketlists',
-        lazy='dynamic', order_by='BucketList.name'))
+        lazy='dynamic', order_by='BucketList.bkt_name'))
     
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, bkt_name):
+        self.bkt_name = bkt_name
 
     @classmethod
     def is_unique(cls, id, name):
@@ -102,4 +102,6 @@ class BucketList(db.Model, AddUpdateDelete):
             else:
                 return False
 
-     
+class BucketListSchema(ma.Schema):
+    id = fields.Integer(dump_only=True)
+    bkt_name
