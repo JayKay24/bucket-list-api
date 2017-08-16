@@ -55,6 +55,12 @@ class User(db.Model, AddUpdateDelete):
             return False
         return True
 
+    def verify_email_address(self, email):
+        if re.search(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", 
+            email) is None:
+            return 'Please enter a valid email address', False
+        return '', True
+
     def __init__(self, name):
         self.name = name
 
@@ -73,4 +79,3 @@ class UserSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     name = fields.String(required=True, validate=validate.Length(3))
     url = ma.URLFor('api.userresource', id='<id>', _external=True)
-    
