@@ -89,4 +89,5 @@ class UserListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
 api.add_resource(UserListResource, '/register/')
+api.add_resource(UserListResource, '/users/')
 api.add_resource(UserResource, '/users/<int:id>')
