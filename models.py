@@ -25,6 +25,7 @@ class AddUpdateDelete:
         return db.session.commit()
 
 class User(db.Model, AddUpdateDelete):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     hashed_password = db.Column(db.String(120), nullable=False)
@@ -82,6 +83,7 @@ class UserSchema(ma.Schema):
     bucketlists = fields.Nested('BucketListSchema', many=True, exclude=('user',))
 
 class BucketList(db.Model, AddUpdateDelete):
+    __tablename__ = 'bucketlist'
     id = db.Column(db.Integer, primary_key=True)
     bkt_name = db.Column(db.String(150), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id',
@@ -111,6 +113,7 @@ class BucketListSchema(ma.Schema):
     bucket_items = fields.Nested('BucketListItemSchema', many=True, exclude=('bucketlist',))
 
 class BucketListItem(db.Model, AddUpdateDelete):
+    __tablename__ = 'bucketlistitems'
     id = db.Column(db.Integer, primary_key=True)
     bkt_item_name = db.Column(db.String(150), unique=True, nullable=False)
     bkt_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id',
