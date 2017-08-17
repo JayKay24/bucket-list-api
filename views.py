@@ -157,7 +157,7 @@ class BucketListListResource(Resource):
             return response, status.HTTP_400_BAD_REQUEST
         try:
             username = request_dict['username']
-            user = User.query.filter_by(username=username)
+            user = User.query.filter_by(username=username).first()
             
             bucketlist = BucketList(
                 bkt_name=bucketlist_name,
