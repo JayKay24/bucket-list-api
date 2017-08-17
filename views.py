@@ -90,13 +90,11 @@ class UserListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
 class BucketListResource(Resource):
-    @jwt_required()
     def get(self, id):
         bucketlist = BucketList.query.get_or_404(id)
         result = bucketlist_schema.dump(bucketlist).data
         return result
 
-    @jwt_required()
     def patch(self, id):
         bucketlist = BucketList.query.get_or_404(id)
         bucketlist_dict = request.get_json(force=True)
@@ -122,7 +120,6 @@ class BucketListResource(Resource):
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
 
-    @jwt_required()
     def delete(self, id):
         bucketlist = BucketList.query.get_or_404(id)
         try:
@@ -135,7 +132,6 @@ class BucketListResource(Resource):
             return resp, status.HTTP_401_UNAUTHORIZED
 
 class BucketListListResource(Resource):
-    @jwt_required()
     def get(self):
         pagination_helper = PaginationHelper(
             request,
@@ -147,7 +143,6 @@ class BucketListListResource(Resource):
         result = pagination_helper.paginate_query()
         return result
 
-    @jwt_required()
     def post(self):
         request_dict = request.get_json()
         if not request_dict:
@@ -161,15 +156,16 @@ class BucketListListResource(Resource):
             response = {'error': 'A bucketlist with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
-            user_id = current_identity
-            user = User.query.filter_by(id=user_id)
+            username = request_dict['username']
+            user = User.query.filter_by(username=username)
             
             bucketlist = BucketList(
-                bkt_name=bucketlist_name)
+                bkt_name=bucketlist_name,
+                user=user)
             bucketlist.add(bucketlist)
             query = BucketList.query.get(bucketlist.id)
             result = bucketlist_schema.dump(query).data
-            return {"result": result}, status.HTTP_201_CREATED
+            return result, status.HTTP_201_CREATED
         except SQLAlchemyError as e:
             db.session.rollback()
             resp = jsonify({"error": str(e)})
