@@ -201,6 +201,17 @@ class BucketListItemResource(Resource):
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
 
+    def delete(self, id):
+        bucketlist_item = BucketListItem.query.get_or_404(id)
+        try:
+            bucketlist_item.delete(bucketlist_item)
+            response = make_response()
+            return response, status.HTTP_204_NO_CONTENT
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            resp = jsonify({"error": str(e)})
+            return resp, status.HTTP_400_BAD_REQUEST
+
 api.add_resource(UserListResource, '/register/')
 api.add_resource(UserResource, '/users/<int:id>')
 api.add_resource(BucketListListResource, '/bucketlists/')
