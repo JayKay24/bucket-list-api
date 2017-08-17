@@ -135,6 +135,7 @@ class BucketListResource(Resource):
             return resp, status.HTTP_401_UNAUTHORIZED
 
 class BucketListListResource(Resource):
+    @jwt_required()
     def get(self):
         pagination_helper = PaginationHelper(
             request,
@@ -146,6 +147,7 @@ class BucketListListResource(Resource):
         result = pagination_helper.paginate_query()
         return result
 
+    @jwt_required()
     def post(self):
         request_dict = request.get_json()
         if not request_dict:
@@ -163,12 +165,11 @@ class BucketListListResource(Resource):
             user = User.query.filter_by(id=user_id)
             
             bucketlist = BucketList(
-                bkt_name=bucketlist_name,
-                user=user)
+                bkt_name=bucketlist_name)
             bucketlist.add(bucketlist)
             query = BucketList.query.get(bucketlist.id)
             result = bucketlist_schema.dump(query).data
-            return result, status.HTTP_201_CREATED
+            return {"result": result}, status.HTTP_201_CREATED
         except SQLAlchemyError as e:
             db.session.rollback()
             resp = jsonify({"error": str(e)})
@@ -176,4 +177,5 @@ class BucketListListResource(Resource):
 
 api.add_resource(UserListResource, '/register/')
 api.add_resource(UserResource, '/users/<int:id>')
+api.add_resource(BucketListListResource, '/bucketlists/')
 api.add_resource(BucketListResource, '/bucketlists/<int:id>')
