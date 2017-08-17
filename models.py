@@ -25,7 +25,6 @@ class AddUpdateDelete:
         return db.session.commit()
 
 class User(db.Model, AddUpdateDelete):
-    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     hashed_password = db.Column(db.String(120), nullable=False)
@@ -82,8 +81,7 @@ class UserSchema(ma.Schema):
     url = ma.URLFor('api.userresource', id='<id>', _external=True)
     bucketlists = fields.Nested('BucketListSchema', many=True, exclude=('user',))
 
-class BucketList(db.Model, AddUpdateDelete):
-    __tablename__ = 'bucketlist'
+class Bucketlist(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
     bkt_name = db.Column(db.String(150), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id',
@@ -112,13 +110,12 @@ class BucketListSchema(ma.Schema):
     url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
     bucket_items = fields.Nested('BucketListItemSchema', many=True, exclude=('bucketlist',))
 
-class BucketListItem(db.Model, AddUpdateDelete):
-    __tablename__ = 'bucketlistitems'
+class Bucketlistitem(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
     bkt_item_name = db.Column(db.String(150), unique=True, nullable=False)
     bkt_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id',
         ondelete='CASCADE'), nullable=False)
-    bucketlist = db.relationship('BucketList', backref=db.backref('bucketlistitems',
+    bucketlist = db.relationship('BucketList', backref=db.backref('bucket_list_items',
         lazy='dynamic', order_by='BucketListItem.bkt_item_name'))
 
     def __init__(self, bkt_item_name, bucketlist):
