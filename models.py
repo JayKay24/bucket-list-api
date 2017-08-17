@@ -79,6 +79,7 @@ class UserSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     username = fields.String(required=True, validate=validate.Length(3))
     url = ma.URLFor('api.userresource', id='<id>', _external=True)
+    bucketlists = fields.Nested('BucketListSchema', many=True, exclude=('user',))
 
 class BucketList(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
@@ -88,8 +89,9 @@ class BucketList(db.Model, AddUpdateDelete):
     user = db.relationship('User', backref=db.backref('bucketlists',
         lazy='dynamic', order_by='BucketList.bkt_name'))
     
-    def __init__(self, bkt_name):
+    def __init__(self, bkt_name, user):
         self.bkt_name = bkt_name
+        self.user = user
 
     @classmethod
     def is_unique(cls, id, bkt_name):
@@ -106,5 +108,7 @@ class BucketListSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     bkt_name = fields.String(required=True, validate=validate.Length(3))
     url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
+
+
 
 

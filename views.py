@@ -4,7 +4,7 @@ from models import db, User, UserSchema, BucketList, BucketListSchema
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
-from flask_jwt import JWT, jwt_required
+from flask_jwt import JWT, jwt_required, current_identity
 from werkzeug.security import safe_str_cmp
 from flask import g
 from models import User, UserSchema
@@ -34,7 +34,6 @@ class UserResource(Resource):
         return result
 
 class UserListResource(Resource):
-    @jwt_required()
     def get(self):
         """
         Retrieves a paginated result set of users.
@@ -131,6 +130,47 @@ class BucketListResource(Resource):
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_401_UNAUTHORIZED
 
+class BucketListListResource(Resource):
+    def get(self):
+        pagination_helper = PaginationHelper(
+            request,
+            query=BucketList.query,
+            resource_for_url='api.bucketlistlistresource',
+            key_name='results',
+            schema=bucketlist_schema
+        )
+        result = pagination_helper.paginate_query()
+        return result
+
+    def post(self):
+        request_dict = request.get_json()
+        if not request_dict:
+            response = {'error': 'No input data provided'}
+            return response, status.HTTP_400_BAD_REQUEST
+        errors = bucketlist_schema.validate(request_dict)
+        if errors:
+            return errors, status.HTTP_400_BAD_REQUEST
+        bucketlist_name = request_dict['bkt_name']
+        if not BucketList.is_unique(id=0, bkt_name=bucketlist_name):
+            response = {'error': 'A bucketlist with the same name already exists'}
+            return response, status.HTTP_400_BAD_REQUEST
+        try:
+            username = request_dict['username']
+            user = User.query.filter_by(username=username).first()
+            
+            bucketlist = BucketList(
+                bkt_name=bucketlist_name,
+                user=user)
+            bucketlist.add(bucketlist)
+            query = BucketList.query.get(bucketlist.id)
+            result = bucketlist_schema.dump(query).data
+            return result, status.HTTP_201_CREATED
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            resp = jsonify({"error": str(e)})
+            return resp, status.HTTP_400_BAD_REQUEST
+
 api.add_resource(UserListResource, '/register/')
 api.add_resource(UserResource, '/users/<int:id>')
+api.add_resource(BucketListListResource, '/bucketlists/')
 api.add_resource(BucketListResource, '/bucketlists/<int:id>')
