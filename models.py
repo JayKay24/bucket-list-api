@@ -109,6 +109,29 @@ class BucketListSchema(ma.Schema):
     bkt_name = fields.String(required=True, validate=validate.Length(3))
     url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
 
+class BucketListItem(db.Model, AddUpdateDelete):
+    id = db.Column(db.Integer, primary_key=True)
+    bkt_item_name = db.Column(db.String(150), unique=True, nullable=False)
+    bkt_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id',
+        ondelete='CASCADE'), nullable=False)
+    bucketlist = db.relationship('BucketList', backref=db.backref('bucketlistitems',
+        lazy='dynamic', order_by='BucketListItem.bkt_item_name'))
+
+    def __init__(self, bkt_item_name, bucketlist):
+        self.bkt_item_name = bkt_item_name
+        self.bucketlist = bucketlist
+
+    @classmethod
+    def is_unique(cls, id, bkt_item_name):
+        existing_bucketlist_item = cls.query.filter_by(bkt_item_name=bkt_item_name).first()
+        if existing_bucketlist_item is None:
+            return True
+        else:
+            if existing_bucketlist_item.id == id:
+                return True
+            else:
+                return False
+            
 
 
 
