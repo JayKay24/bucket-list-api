@@ -89,9 +89,9 @@ class BucketList(db.Model, AddUpdateDelete):
     user = db.relationship('User', backref=db.backref('bucketlists',
         lazy='dynamic', order_by='BucketList.bkt_name'))
     
-    def __init__(self, bkt_name, username):
+    def __init__(self, bkt_name, user):
         self.bkt_name = bkt_name
-        self.username = username
+        self.user = user
 
     @classmethod
     def is_unique(cls, id, bkt_name):
