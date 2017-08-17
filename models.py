@@ -87,7 +87,7 @@ class Bucketlist(db.Model, AddUpdateDelete):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id',
         ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('bucketlists',
-        lazy='dynamic', order_by='BucketList.bkt_name'))
+        lazy='dynamic', order_by='Bucketlist.bkt_name'))
     
     def __init__(self, bkt_name, user):
         self.bkt_name = bkt_name
@@ -115,8 +115,8 @@ class Bucketlistitem(db.Model, AddUpdateDelete):
     bkt_item_name = db.Column(db.String(150), unique=True, nullable=False)
     bkt_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id',
         ondelete='CASCADE'), nullable=False)
-    bucketlist = db.relationship('BucketList', backref=db.backref('bucket_list_items',
-        lazy='dynamic', order_by='BucketListItem.bkt_item_name'))
+    bucketlist = db.relationship('Bucketlist', backref=db.backref('bucket_list_items',
+        lazy='dynamic', order_by='Bucketlistitem.bkt_item_name'))
 
     def __init__(self, bkt_item_name, bucketlist):
         self.bkt_item_name = bkt_item_name

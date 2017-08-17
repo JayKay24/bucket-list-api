@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource
-from models import db, User, UserSchema, BucketList, BucketListSchema, BucketListItem, BucketListItemSchema
+from models import db, User, UserSchema, Bucketlist, BucketListSchema, Bucketlistitem, BucketListItemSchema
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
@@ -91,16 +91,16 @@ class UserListResource(Resource):
 
 class BucketListResource(Resource):
     def get(self, id):
-        bucketlist = BucketList.query.get_or_404(id)
+        bucketlist = Bucketlist.query.get_or_404(id)
         result = bucketlist_schema.dump(bucketlist).data
         return result
 
     def patch(self, id):
-        bucketlist = BucketList.query.get_or_404(id)
+        bucketlist = Bucketlist.query.get_or_404(id)
         bucketlist_dict = request.get_json(force=True)
         if 'bkt_name' in bucketlist_dict:
             bucketlist_bucketlist = bucketlist_dict['bkt_name']
-            if BucketList.is_unique(id=id, bkt_name=bucketlist_bucketlist):
+            if Bucketlist.is_unique(id=id, bkt_name=bucketlist_bucketlist):
                 bucketlist.bkt_name = bucketlist_bucketlist
             else:
                 response = {'error': 'A bucketlist with the same name already exists'}
@@ -121,7 +121,7 @@ class BucketListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
     def delete(self, id):
-        bucketlist = BucketList.query.get_or_404(id)
+        bucketlist = Bucketlist.query.get_or_404(id)
         try:
             delete = bucketlist.delete(bucketlist)
             response = make_response()
@@ -135,7 +135,7 @@ class BucketListListResource(Resource):
     def get(self):
         pagination_helper = PaginationHelper(
             request,
-            query=BucketList.query,
+            query=Bucketlist.query,
             resource_for_url='api.bucketlistlistresource',
             key_name='results',
             schema=bucketlist_schema
@@ -152,18 +152,18 @@ class BucketListListResource(Resource):
         if errors:
             return errors, status.HTTP_400_BAD_REQUEST
         bucketlist_name = request_dict['bkt_name']
-        if not BucketList.is_unique(id=0, bkt_name=bucketlist_name):
+        if not Bucketlist.is_unique(id=0, bkt_name=bucketlist_name):
             response = {'error': 'A bucketlist with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
             username = request_dict['username']
             user = User.query.filter_by(username=username).first()
             
-            bucketlist = BucketList(
+            bucketlist = Bucketlist(
                 bkt_name=bucketlist_name,
                 user=user)
             bucketlist.add(bucketlist)
-            query = BucketList.query.get(bucketlist.id)
+            query = Bucketlist.query.get(bucketlist.id)
             result = bucketlist_schema.dump(query).data
             return result, status.HTTP_201_CREATED
         except SQLAlchemyError as e:
@@ -173,16 +173,16 @@ class BucketListListResource(Resource):
 
 class BucketListItemResource(Resource):
     def get(self, id):
-        bucket_list_item = BucketListItem.query.get_or_404(id)
+        bucket_list_item = Bucketlistitem.query.get_or_404(id)
         result = bucketlist_item_schema.dump(bucket_list_item).data
         return result
 
     def patch(self, id):
-        bucketlist_item = BucketListItem.query.get_or_404(id)
+        bucketlist_item = Bucketlistitem.query.get_or_404(id)
         bucketlist_item_dict = request.get_json(bucketlist_item)
         if 'bkt_item_name' in bucketlist_item_dict:
             bucketitem_bucketitem = bucketlist_item_dict['bkt_item_name']
-            if BucketListItem.is_unique(id=id, bkt_item_name=bucketitem_bucketitem):
+            if Bucketlistitem.is_unique(id=id, bkt_item_name=bucketitem_bucketitem):
                 bucketlist_item.bkt_item_name = bucketitem_bucketitem
             else:
                 response = {"error": "A bucketlist item with the same name already exists"}
@@ -202,7 +202,7 @@ class BucketListItemResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
     def delete(self, id):
-        bucketlist_item = BucketListItem.query.get_or_404(id)
+        bucketlist_item = Bucketlistitem.query.get_or_404(id)
         try:
             bucketlist_item.delete(bucketlist_item)
             response = make_response()
@@ -216,7 +216,7 @@ class BucketListItemListResource(Resource):
     def get(self):
         pagination_helper = PaginationHelper(
             request,
-            query=BucketListItem.query,
+            query=Bucketlistitem.query,
             resource_for_url='api.bucketlistitemlistresource',
             key_name='result',
             schema=bucketlist_item_schema
@@ -233,18 +233,18 @@ class BucketListItemListResource(Resource):
         if errors:
             return errors, status.HTTP_400_BAD_REQUEST
         bucketlist_item_name = request_dict['bkt_item_name']
-        if not BucketListItem.is_unique(id=0, bkt_item_name=bucketlist_item_name):
+        if not Bucketlistitem.is_unique(id=0, bkt_item_name=bucketlist_item_name):
             response = {'error': 'A bucketlist item with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
-            bkt_name = request_dict[' bkt_name']
-            bucketlist = BucketList.query.filter_by(bkt_name=bkt_name).first()
+            bkt_name = request_dict['bkt_name']
+            bucketlist = Bucketlist.query.filter_by(bkt_name=bkt_name).first()
 
-            bucketlist_item = BucketListItem(
+            bucketlist_item = Bucketlistitem(
                 bkt_item_name=bucketlist_item_name,
                 bucketlist=bucketlist)
             bucketlist_item.add(bucketlist_item)
-            query = BucketListItem.query.get(bucketlist_item.id)
+            query = Bucketlistitem.query.get(bucketlist_item.id)
             result = bucketlist_item_schema.dump(bucketlist_item).data
             return result, status.HTTP_200_OK
         except SQLAlchemyError as e:
