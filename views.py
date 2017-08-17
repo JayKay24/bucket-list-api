@@ -212,6 +212,46 @@ class BucketListItemResource(Resource):
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
 
+class BucketListItemListResource(Resource):
+    def get(self):
+        pagination_helper = PaginationHelper(
+            request,
+            query=BucketListItem.query,
+            resource_for_url='api.bucketlistitemlistresource',
+            key_name='result',
+            schema=bucketlist_item_schema
+        )
+        result = pagination_helper.paginate_query()
+        return result
+
+    def post(self):
+        request_dict = request.get_json()
+        if not request_dict:
+            response = {'error': 'No input data provided'}
+            return response, status.HTTP_400_BAD_REQUEST
+        errors = bucketlist_item_schema.validate(request_dict)
+        if errors:
+            return errors, status.HTTP_400_BAD_REQUEST
+        bucketlist_item_name = request_dict['bkt_item_name']
+        if not BucketListItem.is_unique(id=0, bkt_item_name=bucketlist_item_name):
+            response = {'error': 'A bucketlist item with the same name already exists'}
+            return response, status.HTTP_400_BAD_REQUEST
+        try:
+            bkt_name = request_dict[' bkt_name']
+            bucketlist = BucketList.query.filter_by(bkt_name=bkt_name).first()
+
+            bucketlist_item = BucketListItem(
+                bkt_item_name=bucketlist_item_name,
+                bucketlist=bucketlist)
+            bucketlist_item.add(bucketlist_item)
+            query = BucketListItem.query.get(bucketlist_item.id)
+            result = bucketlist_item_schema.dump(bucketlist_item).data
+            return result, status.HTTP_200_OK
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            resp = jsonify({"error": str(e)})
+            return resp, status.HTTP_400_BAD_REQUEST
+
 api.add_resource(UserListResource, '/register/')
 api.add_resource(UserResource, '/users/<int:id>')
 api.add_resource(BucketListListResource, '/bucketlists/')
