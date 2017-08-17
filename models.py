@@ -79,6 +79,7 @@ class UserSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     username = fields.String(required=True, validate=validate.Length(3))
     url = ma.URLFor('api.userresource', id='<id>', _external=True)
+    bucketlists = fields.Nested('BucketListSchema', many=True, exclude=('user',))
 
 class BucketList(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
