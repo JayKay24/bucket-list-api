@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource
-from models import db, User, UserSchema, BucketList, BucketListSchema
+from models import db, User, UserSchema, BucketList, BucketListSchema, BucketListItem, BucketListItemSchema
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
@@ -25,6 +25,7 @@ def identity(payload):
 api_bp = Blueprint('api', __name__)
 user_schema = UserSchema()
 bucketlist_schema = BucketListSchema()
+bucketlist_item_schema = BucketListItemSchema()
 api = Api(api_bp)
 
 class UserResource(Resource):
@@ -165,6 +166,36 @@ class BucketListListResource(Resource):
             query = BucketList.query.get(bucketlist.id)
             result = bucketlist_schema.dump(query).data
             return result, status.HTTP_201_CREATED
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            resp = jsonify({"error": str(e)})
+            return resp, status.HTTP_400_BAD_REQUEST
+
+class BucketListItemResource(Resource):
+    def get(self, id):
+        bucket_list_item = BucketListItem.query.get_or_404(id)
+        result = bucketlist_item_schema.dump(bucket_list_item).data
+        return result
+
+    def patch(self, id):
+        bucketlist_item = BucketListItem.query.get_or_404(id)
+        bucketlist_item_dict = request.get_json(bucketlist_item)
+        if 'bkt_item_name' in bucketlist_item_dict:
+            bucketitem_bucketitem = bucketlist_item_dict['bkt_item_name']
+            if BucketListItem.is_unique(id=id, bkt_item_name=bucketitem_bucketitem):
+                bucketlist_item.bkt_item_name = bucketitem_bucketitem
+            else:
+                response = {"error": "A bucketlist item with the same name already exists"}
+                return response, status.HTTP_400_BAD_REQUEST
+        dumped_bucketlist_item, dump_errors = bucketlist_item_schema.dump(bucketlist_item)
+        if dump_errors:
+            return dump_errors, status.HTTP_400_BAD_REQUEST
+        validate_errors = bucketlist_schema.validate(dumped_bucketlist_item)
+        if validate_errors:
+            return validate_errors, status.HTTP_400_BAD_REQUEST
+        try:
+            bucketlist_item.update()
+            return self.get(id)
         except SQLAlchemyError as e:
             db.session.rollback()
             resp = jsonify({"error": str(e)})
