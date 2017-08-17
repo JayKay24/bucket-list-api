@@ -107,7 +107,23 @@ class BucketList(db.Model, AddUpdateDelete):
 class BucketListSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     bkt_name = fields.String(required=True, validate=validate.Length(3))
-    user = fields.Nested(UserSchema, only=['username', 'url'], required=True)
+    user = fields.Nested(UserSchema, only=['url', 'username', 'url'], 
+    required=True)
     url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
+
+    @pre_load
+    def process_user(self, data):
+        username = data.get('username')
+        if username:
+            if isinstance(username, dict):
+                user_name = username.get('username')
+            else:
+                user_name = username
+            username_dict = (username=user_name)
+        else:
+            username_dict = {}
+        data['username'] = username_dict
+        return data
+
 
 
