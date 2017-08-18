@@ -91,11 +91,13 @@ class UserListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
 class BucketListResource(Resource):
+    @jwt_required
     def get(self, id):
         bucketlist = Bucketlist.query.get_or_404(id)
         result = bucketlist_schema.dump(bucketlist).data
         return result
 
+    @jwt_required
     def patch(self, id):
         bucketlist = Bucketlist.query.get_or_404(id)
         bucketlist_dict = request.get_json(force=True)
@@ -121,6 +123,7 @@ class BucketListResource(Resource):
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
 
+    @jwt_required
     def delete(self, id):
         bucketlist = Bucketlist.query.get_or_404(id)
         try:
@@ -145,6 +148,7 @@ class BucketListListResource(Resource):
         result = pagination_helper.paginate_query()
         return result
 
+    @jwt_required
     def post(self):
         request_dict = request.get_json()
         if not request_dict:
@@ -190,6 +194,7 @@ class BucketListItemResource(Resource):
         result = bucketlist_item_schema.dump(bucket_list_item).data
         return result
 
+    @jwt_required
     def patch(self, id):
         print("start")
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
@@ -232,6 +237,7 @@ class BucketListItemResource(Resource):
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
 
+    @jwt_required
     def delete(self, id):
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
         try:
@@ -256,6 +262,7 @@ class BucketListItemListResource(Resource):
         result = pagination_helper.paginate_query()
         return result
 
+    @jwt_required
     def post(self):
         request_dict = request.get_json()
         if not request_dict:
