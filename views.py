@@ -29,22 +29,6 @@ bucketlist_schema = BucketListSchema()
 bucketlist_item_schema = BucketListItemSchema()
 api = Api(api_bp)
 
-@app.route('/api/v1/login', methods=[POST]):
-def login():
-    username = request.json['username']
-    password = request.json['password']
-
-    if authenticate(username, password):
-        if user.verify_password(password):
-            expiration_time = timedelta(hours=2)
-            token = create_access_token(identity=username,
-                expires_delta=expiration_time)
-            response = jsonify({"token": token, "expiration time": expiration_time})
-            return response, status.HTTP_200_OK
-        else:
-            response = {'error': 'Incorrect password'}
-            return response, status.HTTP_400_BAD_REQUEST
-
 class UserResource(Resource):
     def get(self, id):
         user = User.query.get_or_404(id)
