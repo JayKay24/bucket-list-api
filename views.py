@@ -6,7 +6,6 @@ from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
 from flask_jwt import JWT, jwt_required, current_identity
-from werkzeug.security import safe_str_cmp
 from flask import g
 from models import User, UserSchema
 
@@ -91,6 +90,8 @@ class UserListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
 class BucketListResource(Resource):
+    method_decorators = [jwt_required]
+
     def get(self, id):
         bucketlist = Bucketlist.query.get_or_404(id)
         result = bucketlist_schema.dump(bucketlist).data
@@ -191,7 +192,9 @@ class BucketListItemResource(Resource):
     def patch(self, id):
         print("start")
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
-        bucketlist_item_dict = request.get_json(bucketlist_item)
+        bucketlist_item_dict = request.get_json(force=True)
+        # bucketlist_item_dict = request.get_json()
+        print(bucketlist_item_dict)
         if 'bkt_item_name' in bucketlist_item_dict:
             bucketitem_bucketitem = bucketlist_item_dict['bkt_item_name']
             if Bucketlistitem.is_unique(id=id, bkt_item_name=bucketitem_bucketitem):
@@ -207,12 +210,19 @@ class BucketListItemResource(Resource):
             else:
                 bucketlist_item.bucketlist = bucketlist
         print("middle")
+        print(bucketlist_item.bkt_item_name)
         dumped_bucketlist_item, dump_errors = bucketlist_item_schema.dump(bucketlist_item)
         if dump_errors:
             return dump_errors, status.HTTP_400_BAD_REQUEST
+
+        dumped_bucketlist_item['bkt_name'] = Bucketlistitem.query.get(id).bucketlist.bkt_name
+        print('_'*100)
+        print(dumped_bucketlist_item)
+        print('_'*100)
         validate_errors = bucketlist_schema.validate(dumped_bucketlist_item)
         if validate_errors:
             return validate_errors, status.HTTP_400_BAD_REQUEST
+        print("end")
         try:
             bucketlist_item.update()
             return self.get(id)
