@@ -189,6 +189,7 @@ class BucketListItemResource(Resource):
         return result
 
     def patch(self, id):
+        print("start")
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
         bucketlist_item_dict = request.get_json(bucketlist_item)
         if 'bkt_item_name' in bucketlist_item_dict:
@@ -198,6 +199,14 @@ class BucketListItemResource(Resource):
             else:
                 response = {"error": "A bucketlist item with the same name already exists"}
                 return response, status.HTTP_400_BAD_REQUEST
+        if 'bkt_name' in bucketlist_item_dict:
+            bucketlist = Bucketlist.query.filter_by(bkt_name=bucketlist_item_dict['bkt_name']).first()
+            if bucketlist is None:
+                response = {'error': 'No bucketlist by that name exists'}
+                return response, status.HTTP_400_BAD_REQUEST
+            else:
+                bucketlist_item.bucketlist = bucketlist
+        print("middle")
         dumped_bucketlist_item, dump_errors = bucketlist_item_schema.dump(bucketlist_item)
         if dump_errors:
             return dump_errors, status.HTTP_400_BAD_REQUEST
