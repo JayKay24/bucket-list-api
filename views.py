@@ -166,6 +166,9 @@ class BucketListListResource(Resource):
                 response = {"error": "Please provide a user for the bucketlist"}
                 return response, status.HTTP_400_BAD_REQUEST
             user = User.query.filter_by(username=username).first()
+            if user is None:
+                response = {"error": "No user with that name exists"}
+                return response, status.HTTP_400_BAD_REQUEST
             
             bucketlist = Bucketlist(
                 bkt_name=bucketlist_name,
@@ -247,6 +250,9 @@ class BucketListItemListResource(Resource):
         try:
             bkt_name = request_dict['bkt_name']
             bucketlist = Bucketlist.query.filter_by(bkt_name=bkt_name).first()
+            if bucketlist is None:
+                response = {"error": "No bucketlist with that name exists"}
+                return response, status.HTTP_400_BAD_REQUEST
 
             bucketlist_item = Bucketlistitem(
                 bkt_item_name=bucketlist_item_name,
