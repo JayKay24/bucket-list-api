@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource
 from models import db, User, UserSchema, Bucketlist, BucketListSchema, Bucketlistitem, BucketListItemSchema
@@ -6,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
 from flask_jwt import JWT, jwt_required, current_identity
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask import g
 from models import User, UserSchema
 
@@ -15,8 +17,7 @@ def authenticate(username, password):
     user = User.query.filter_by(username=username).first()
     if user is None:
         return False
-    if user.verify_password(password):
-        return user
+    return True
 
 def identity(payload):
     user_id = payload['identity']
@@ -27,6 +28,22 @@ user_schema = UserSchema()
 bucketlist_schema = BucketListSchema()
 bucketlist_item_schema = BucketListItemSchema()
 api = Api(api_bp)
+
+@app.route('/api/v1/login', methods=[POST]):
+def login():
+    username = request.json['username']
+    password = request.json['password']
+
+    if authenticate(username, password):
+        if user.verify_password(password):
+            expiration_time = timedelta(hours=2)
+            token = create_access_token(identity=username,
+                expires_delta=expiration_time)
+            response = jsonify({"token": token, "expiration time": expiration_time})
+            return response, status.HTTP_200_OK
+        else:
+            response = {'error': 'Incorrect password'}
+            return response, status.HTTP_400_BAD_REQUEST
 
 class UserResource(Resource):
     def get(self, id):
@@ -90,8 +107,6 @@ class UserListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
 class BucketListResource(Resource):
-    method_decorators = [jwt_required]
-
     def get(self, id):
         bucketlist = Bucketlist.query.get_or_404(id)
         result = bucketlist_schema.dump(bucketlist).data
@@ -134,6 +149,7 @@ class BucketListResource(Resource):
             return resp, status.HTTP_401_UNAUTHORIZED
 
 class BucketListListResource(Resource):
+    @jwt_required
     def get(self):
         pagination_helper = PaginationHelper(
             request,
@@ -184,6 +200,7 @@ class BucketListListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
 class BucketListItemResource(Resource):
+    @jwt_required
     def get(self, id):
         bucket_list_item = Bucketlistitem.query.get_or_404(id)
         result = bucketlist_item_schema.dump(bucket_list_item).data
@@ -243,6 +260,7 @@ class BucketListItemResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
 class BucketListItemListResource(Resource):
+    @jwt_required
     def get(self):
         pagination_helper = PaginationHelper(
             request,
