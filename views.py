@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, request, jsonify, make_response
 from flask_restful import Api, Resource
 from models import db, User, UserSchema, Bucketlist, BucketListSchema, Bucketlistitem, BucketListItemSchema
@@ -157,6 +158,9 @@ class BucketListListResource(Resource):
             return response, status.HTTP_400_BAD_REQUEST
         try:
             username = request_dict['username']
+            if not username:
+                response = {"error": "Please provide a user for the bucketlist"}
+                return response, status.HTTP_400_BAD_REQUEST
             user = User.query.filter_by(username=username).first()
             
             bucketlist = Bucketlist(
@@ -205,7 +209,7 @@ class BucketListItemResource(Resource):
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
         try:
             bucketlist_item.delete(bucketlist_item)
-            response = make_response()
+            response = {"message": "The bucketlist item has been safely deleted"}
             return response, status.HTTP_204_NO_CONTENT
         except SQLAlchemyError as e:
             db.session.rollback()
