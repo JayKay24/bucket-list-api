@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 from flask import request, jsonify
 from app import create_app
@@ -12,7 +13,7 @@ app = create_app('config')
 # jwt = JWT(app, views.authenticate, views.identity)
 
 
-@app.route('/api/v1/login', methods=['POST'])
+@app.route('/api/v1/login/', methods=['POST'])
 def login():
     username = request.json['username']
     password = request.json['password']
@@ -26,7 +27,7 @@ def login():
             expiration_time = timedelta(hours=2)
             token = create_access_token(identity=username,
                 expires_delta=expiration_time)
-            response = jsonify({"token": token, "expiration time": expiration_time})
+            response = jsonify({"token": token})
             return response, status.HTTP_200_OK
         else:
             response = {'error': 'Incorrect password'}
