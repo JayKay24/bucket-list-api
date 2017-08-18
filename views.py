@@ -157,7 +157,11 @@ class BucketListListResource(Resource):
             response = {'error': 'A bucketlist with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
-            username = request_dict['username']
+            try:
+                username = request_dict['username']
+            except KeyError as e:
+                response = jsonify({"error": str(e)})
+                return response, status.HTTP_400_BAD_REQUEST
             if not username:
                 response = {"error": "Please provide a user for the bucketlist"}
                 return response, status.HTTP_400_BAD_REQUEST
