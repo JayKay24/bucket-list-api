@@ -124,8 +124,8 @@ class BucketListResource(Resource):
     def delete(self, id):
         bucketlist = Bucketlist.query.get_or_404(id)
         try:
-            delete = bucketlist.delete(bucketlist)
-            response = make_response()
+            bucketlist.delete(bucketlist)
+            response = {"error": "The bucketlist has been successfully deleted"}
             return response, status.HTTP_204_NO_CONTENT
         except SQLAlchemyError as e:
             db.session.rollback()
@@ -160,7 +160,7 @@ class BucketListListResource(Resource):
             try:
                 username = request_dict['username']
             except KeyError as e:
-                response = jsonify({"error": str(e)})
+                response = {"error": "Please provide a user for the bucketlist"}
                 return response, status.HTTP_400_BAD_REQUEST
             if not username:
                 response = {"error": "Please provide a user for the bucketlist"}
