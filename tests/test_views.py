@@ -63,8 +63,8 @@ class ViewsTests(unittest.TestCase):
         """
         response = self.test_client.get(
             url_for('api.userlistresource', _external=True),
-            headers=self.get_accept_content_type_headers(),
-        )
+            headers=self.get_authentication_headers(self.test_user_name, 
+                self.test_user_password))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
