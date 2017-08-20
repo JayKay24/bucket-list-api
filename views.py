@@ -284,7 +284,7 @@ class BucketListItemListResource(Resource):
             bucketlist_item.add(bucketlist_item)
             query = Bucketlistitem.query.get(bucketlist_item.id)
             result = bucketlist_item_schema.dump(bucketlist_item).data
-            return result, status.HTTP_200_OK
+            return result, status.HTTP_201_CREATED
         except SQLAlchemyError as e:
             db.session.rollback()
             resp = jsonify({"error": str(e)})
