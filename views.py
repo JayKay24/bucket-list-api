@@ -10,18 +10,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import g
 from models import User, UserSchema
 
-def authenticate(username, password):
-    if not (username and password):
-        return False
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        return False
-    return True
-
-def identity(payload):
-    user_id = payload['identity']
-    return {'user_id': user_id}
-
 api_bp = Blueprint('api', __name__)
 user_schema = UserSchema()
 bucketlist_schema = BucketListSchema()
