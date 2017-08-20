@@ -6,7 +6,6 @@ from models import db, User, UserSchema, Bucketlist, BucketListSchema, Bucketlis
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
-from flask_jwt import JWT, jwt_required, current_identity
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask import g
 from models import User, UserSchema
@@ -36,6 +35,7 @@ class UserResource(Resource):
         return result
 
 class UserListResource(Resource):
+    @jwt_required
     def get(self):
         """
         Retrieves a paginated result set of users.
