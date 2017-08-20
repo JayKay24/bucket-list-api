@@ -35,7 +35,6 @@ class UserResource(Resource):
         return result
 
 class UserListResource(Resource):
-    @jwt_required
     def get(self):
         """
         Retrieves a paginated result set of users.
