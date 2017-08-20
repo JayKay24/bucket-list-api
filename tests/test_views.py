@@ -26,6 +26,7 @@ class ViewsTests(unittest.TestCase):
         return {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
+            'Authorization': ''
         }
 
     def get_authentication_headers(self, username, password):
