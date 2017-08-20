@@ -35,8 +35,9 @@ class ViewsTests(unittest.TestCase):
             expiration_time = timedelta(hours=2)
             token = create_access_token(identity=username, 
                 expiration_time=expiration_time)
-        authentication_headers['Authorization'] = \
+            authentication_headers['Authorization'] = \
             'Bearer ' + token
+        return authentication_headers
 
     def create_user(self, username, password):
         url = url_for('api.userlistresource', _external=True)
