@@ -27,7 +27,7 @@ def login():
             expiration_time = timedelta(hours=2)
             token = create_access_token(identity=username,
                 expires_delta=expiration_time)
-            response = jsonify({"token": token, "user_id": user.id})
+            response = jsonify({"token": token})
             return response, status.HTTP_200_OK
         else:
             response = {'error': 'Incorrect password'}

@@ -293,8 +293,8 @@ class BucketListItemListResource(Resource):
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
 
-api.add_resource(UserListResource, '/register/')
-api.add_resource(UserResource, '/users/<int:id>')
+api.add_resource(UserListResource, '/auth/register/')
+api.add_resource(UserResource, '/auth/users/<int:id>')
 api.add_resource(BucketListListResource, '/bucketlists/')
 api.add_resource(BucketListResource, '/bucketlists/<int:id>')
 api.add_resource(BucketListItemListResource, '/bucketlistitems/')
