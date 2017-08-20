@@ -38,6 +38,16 @@ class ViewsTests(unittest.TestCase):
         authentication_headers['Authorization'] = \
             'Bearer ' + token
 
+    def create_user(self, username, password):
+        url = url_for('api.userlistresource', _external=True)
+        data = {'username': username, 'password': password, 
+            'confirm_password': password}
+        response = self.test_client.post(
+            url,
+            headers=self.get_accept_content_type_headers(),
+            data=json.dumps(data))
+        return response
+
     def test_get_users_without_authentication(self):
         """
         Ensure a user cannot access a resource that requires authentication
