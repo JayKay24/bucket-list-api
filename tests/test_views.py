@@ -1,8 +1,11 @@
 import unittest
 import status
+from datetime import timedelta
+from flask_jwt_extended import create_access_token
 from app import create_app
 from flask import current_app, json, url_for
 from models import db, User
+from views import authenticate
 
 class InitialTests(unittest.TestCase):
     def setUp(self):
@@ -24,6 +27,16 @@ class InitialTests(unittest.TestCase):
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
+
+    def get_authentication_headers(self, username, password):
+        authentication_headers = self.get_accept_content_type_headers()
+        authenticated = authenticate(username, password)
+        if authenticated:
+            expiration_time = timedelta(hours=2)
+            token = create_access_token(identity=username, 
+                expiration_time=expiration_time)
+        authentication_headers['Authorization'] = \
+            'Bearer ' + token
 
     def test_get_users_without_authentication(self):
         """
