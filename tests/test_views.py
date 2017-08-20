@@ -92,6 +92,18 @@ class ViewsTests(unittest.TestCase):
         response = self.create_bucketlist("Extreme heights", self.test_user_name)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_create_bucketlist_item(self):
+        """
+        An authenticated user should be able to create a bucketlist item.
+        """
+        response = self.create_user(self.test_user_name, self.test_user_password)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.create_bucketlist("Extreme heights", self.test_user_name)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.create_bucketlist_item("Extreme heights", "Mount Everest")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+
 
 
 
