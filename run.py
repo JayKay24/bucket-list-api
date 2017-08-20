@@ -12,7 +12,7 @@ app = create_app('config')
 # jwt = JWT(app, views.authenticate, views.identity)
 
 
-@app.route('/api/v1/login/', methods=['POST'])
+@app.route('/api/v1/auth/login/', methods=['POST'])
 def login():
     request_dict = request.get_json()
     username = request_dict['username']
