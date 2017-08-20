@@ -48,6 +48,13 @@ class ViewsTests(unittest.TestCase):
             data=json.dumps(data))
         return response
 
+    def test_user_registration(self):
+        """
+        Ensure we can register a user with the application.
+        """
+        response = self.create_user(self.test_user_name, self.test_user_password)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
     def test_get_users_without_authentication(self):
         """
         Ensure a user cannot access a resource that requires authentication
