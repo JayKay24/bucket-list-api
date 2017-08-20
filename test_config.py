@@ -15,4 +15,4 @@ PAGINATION_PAGE_ARGUMENT_NAME = 'page'
 # Disable CSRF protection in the testing configuration
 WTF_CSRF_ENABLED = False
 SERVER_NAME = "127.0.0.1:5000"
-JWT_TOKEN_LOCATION = ['headers', 'cookies']
+JWT_TOKEN_LOCATION = 'headers'
