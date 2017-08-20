@@ -2,7 +2,6 @@ import json
 from datetime import timedelta
 from flask import request, jsonify
 from app import create_app
-from flask_jwt_extended import JWTManager
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
 from views import authenticate
 from models import User
