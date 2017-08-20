@@ -6,7 +6,7 @@ from models import db, User, UserSchema, Bucketlist, BucketListSchema, Bucketlis
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask import g
 from models import User, UserSchema
 
