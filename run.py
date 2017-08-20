@@ -3,7 +3,7 @@ from datetime import timedelta
 from flask import request, jsonify
 from app import create_app
 from flask_jwt_extended import JWTManager
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
 from views import authenticate
 from models import User
 import views
@@ -27,7 +27,7 @@ def login():
             expiration_time = timedelta(hours=2)
             token = create_access_token(identity=username,
                 expires_delta=expiration_time)
-            response = jsonify({"token": token})
+            response = jsonify({"token": token, "user_id": user.id})
             return response, status.HTTP_200_OK
         else:
             response = {'error': 'Incorrect password'}
