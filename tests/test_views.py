@@ -7,7 +7,7 @@ from flask import current_app, json, url_for
 from models import db, User
 from views import authenticate
 
-class InitialTests(unittest.TestCase):
+class ViewsTests(unittest.TestCase):
     def setUp(self):
         self.app = create_app('test_config')
         self.test_client = self.app.test_client()
