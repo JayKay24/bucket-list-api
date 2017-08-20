@@ -124,7 +124,7 @@ class BucketListResource(Resource):
         bucketlist = Bucketlist.query.get_or_404(id)
         try:
             bucketlist.delete(bucketlist)
-            response = {"error": "The bucketlist has been successfully deleted"}
+            response = jsonify({"error": "The bucketlist has been successfully deleted"})
             return response, status.HTTP_204_NO_CONTENT
         except SQLAlchemyError as e:
             db.session.rollback()
@@ -238,7 +238,7 @@ class BucketListItemResource(Resource):
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
         try:
             bucketlist_item.delete(bucketlist_item)
-            response = {"message": "The bucketlist item has been safely deleted"}
+            response = jsonify({"message": "The bucketlist item has been safely deleted"})
             return response, status.HTTP_204_NO_CONTENT
         except SQLAlchemyError as e:
             db.session.rollback()
