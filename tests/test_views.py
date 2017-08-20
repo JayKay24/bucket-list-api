@@ -77,6 +77,13 @@ class ViewsTests(unittest.TestCase):
             headers=self.get_accept_content_type_headers())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_create_bucketlist(self):
+        response = self.create_user(self.test_user_name, self.test_user_password)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.create_bucketlist("Extreme heights", self.test_user_name)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+
 
 
 
