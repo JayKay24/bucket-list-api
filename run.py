@@ -14,8 +14,9 @@ app = create_app('config')
 
 @app.route('/api/v1/login/', methods=['POST'])
 def login():
-    username = request.json['username']
-    password = request.json['password']
+    request_dict = request.get_json()
+    username = request_dict['username']
+    password = request_dict['password']
 
     if authenticate(username, password):
         user = User.query.filter_by(username=username).first()
