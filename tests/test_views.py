@@ -34,9 +34,8 @@ class ViewsTests(unittest.TestCase):
         authentication_headers = self.get_accept_content_type_headers()
         authenticated = authenticate(username, password)
         if authenticated:
-            expiration_time = timedelta(hours=2)
-            token = create_access_token(identity=username, 
-                expiration_time=expiration_time)
+            # expiration_time = timedelta(hours=2)
+            token = create_access_token(identity=username)
             authentication_headers['Authorization'] ='Bearer ' + token
         return authentication_headers
 
@@ -57,6 +56,16 @@ class ViewsTests(unittest.TestCase):
             url,
             headers=self.get_authentication_headers(self.test_user_name,
                 self.test_user_password),
+            data=json.dumps(data))
+        return response
+
+    def create_bucketlist_item(self, bkt_name, bkt_item_name):
+        url = url_for('api.bucketlistitemlistresource', _external=True)
+        data = {'bkt_name': bkt_name, 'bkt_item_name': bkt_item_name}
+        response = self.test_client.post(
+            url,
+            headers=self.get_authentication_headers(self.test_user_name,
+            self.test_user_password),
             data=json.dumps(data))
         return response
 
