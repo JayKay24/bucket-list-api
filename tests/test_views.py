@@ -56,7 +56,7 @@ class ViewsTests(unittest.TestCase):
         response = self.test_client.post(
             url,
             headers=self.get_authentication_headers(self.test_user_name,
-                self.test_user_password)
+                self.test_user_password),
             data=json.dumps(data))
         return response
 
@@ -82,7 +82,7 @@ class ViewsTests(unittest.TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response = self.create_bucketlist("Extreme heights", self.test_user_name)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
+
 
 
 
