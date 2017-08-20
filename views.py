@@ -124,8 +124,8 @@ class BucketListResource(Resource):
         bucketlist = Bucketlist.query.get_or_404(id)
         try:
             bucketlist.delete(bucketlist)
-            response = jsonify({"error": "The bucketlist has been successfully deleted"})
-            return response, status.HTTP_204_NO_CONTENT
+            # response = {"message": "The bucketlist has been successfully deleted"}
+            return '', status.HTTP_204_NO_CONTENT
         except SQLAlchemyError as e:
             db.session.rollback()
             resp = jsonify({"error": str(e)})
@@ -211,20 +211,14 @@ class BucketListItemResource(Resource):
                 return response, status.HTTP_400_BAD_REQUEST
             else:
                 bucketlist_item.bucketlist = bucketlist
-        print("middle")
-        print(bucketlist_item.bkt_item_name)
         dumped_bucketlist_item, dump_errors = bucketlist_item_schema.dump(bucketlist_item)
         if dump_errors:
             return dump_errors, status.HTTP_400_BAD_REQUEST
 
         dumped_bucketlist_item['bkt_name'] = Bucketlistitem.query.get(id).bucketlist.bkt_name
-        print('_'*100)
-        print(dumped_bucketlist_item)
-        print('_'*100)
         validate_errors = bucketlist_schema.validate(dumped_bucketlist_item)
         if validate_errors:
             return validate_errors, status.HTTP_400_BAD_REQUEST
-        print("end")
         try:
             bucketlist_item.update()
             return self.get(id)
@@ -238,8 +232,9 @@ class BucketListItemResource(Resource):
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
         try:
             bucketlist_item.delete(bucketlist_item)
-            response = jsonify({"message": "The bucketlist item has been safely deleted"})
-            return response, status.HTTP_204_NO_CONTENT
+            # response = {"message": "The bucketlist item has been safely deleted"}
+            # resp = make_response("", status.HTTP_204_NO_CONTENT)
+            return '', status.HTTP_204_NO_CONTENT
         except SQLAlchemyError as e:
             db.session.rollback()
             resp = jsonify({"error": str(e)})
