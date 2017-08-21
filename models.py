@@ -55,12 +55,6 @@ class User(db.Model, AddUpdateDelete):
             return False
         return True
 
-    def verify_email_address(self, email):
-        if re.search(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", 
-            email) is None:
-            return 'Please enter a valid email address', False
-        return '', True
-
     def __init__(self, username):
         self.username = username
 
