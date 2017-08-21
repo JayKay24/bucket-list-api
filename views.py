@@ -1,13 +1,13 @@
 import json
 from datetime import timedelta
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
-from models import db, User, UserSchema, Bucketlist, BucketListSchema, Bucketlistitem, BucketListItemSchema
+from models import (db, User, UserSchema, Bucketlist, 
+    BucketListSchema, Bucketlistitem, BucketListItemSchema)
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask import g
+from flask_jwt_extended import jwt_required
 from models import User, UserSchema
 
 def authenticate(username, password):
