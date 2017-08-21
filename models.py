@@ -50,11 +50,6 @@ class User(db.Model, AddUpdateDelete):
         self.hashed_password = password_context.encrypt(password)
         return '', True
 
-    def verify_matching_password(self, password, second_password):
-        if password != second_password:
-            return False
-        return True
-
     def __init__(self, username):
         self.username = username
 
