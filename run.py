@@ -30,7 +30,7 @@ def login():
             response = jsonify({"token": token})
             return response, status.HTTP_200_OK
         else:
-            response = {'error': 'Incorrect password'}
+            response = jsonify({'error': 'Incorrect password'})
             return response, status.HTTP_400_BAD_REQUEST
 
 jwt = JWTManager(app)
