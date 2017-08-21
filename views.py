@@ -89,12 +89,18 @@ class UserListResource(Resource):
 class BucketListResource(Resource):
     @jwt_required
     def get(self, id):
+        """
+        Retrieve a bucketlist with the specified id.
+        """
         bucketlist = Bucketlist.query.get_or_404(id)
         result = bucketlist_schema.dump(bucketlist).data
         return result
 
     @jwt_required
     def patch(self, id):
+        """
+        Modify a bucketlist with the specified id.
+        """
         bucketlist = Bucketlist.query.get_or_404(id)
         bucketlist_dict = request.get_json(force=True)
         if 'bkt_name' in bucketlist_dict:
@@ -121,6 +127,9 @@ class BucketListResource(Resource):
 
     @jwt_required
     def delete(self, id):
+        """
+        Delete a bucketlist with the specified id.
+        """
         bucketlist = Bucketlist.query.get_or_404(id)
         try:
             bucketlist.delete(bucketlist)
@@ -134,6 +143,9 @@ class BucketListResource(Resource):
 class BucketListListResource(Resource):
     @jwt_required
     def get(self):
+        """
+        Retrieve a paginated set of bucketlists.
+        """
         pagination_helper = PaginationHelper(
             request,
             query=Bucketlist.query,
@@ -146,6 +158,9 @@ class BucketListListResource(Resource):
 
     @jwt_required
     def post(self):
+        """
+        Create a new bucketlist.
+        """
         request_dict = request.get_json()
         if not request_dict:
             response = {'error': 'No input data provided'}
@@ -186,12 +201,18 @@ class BucketListListResource(Resource):
 class BucketListItemResource(Resource):
     @jwt_required
     def get(self, id):
+        """
+        Retrieve a bucketlist item with the specified id.
+        """
         bucket_list_item = Bucketlistitem.query.get_or_404(id)
         result = bucketlist_item_schema.dump(bucket_list_item).data
         return result
 
     @jwt_required
     def patch(self, id):
+        """
+        Modify a bucketlist item with the specified id.
+        """
         print("start")
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
         bucketlist_item_dict = request.get_json(force=True)
@@ -229,6 +250,9 @@ class BucketListItemResource(Resource):
 
     @jwt_required
     def delete(self, id):
+        """
+        Delete a bucketlist item with the specified id.
+        """
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
         try:
             bucketlist_item.delete(bucketlist_item)
@@ -243,6 +267,9 @@ class BucketListItemResource(Resource):
 class BucketListItemListResource(Resource):
     @jwt_required
     def get(self):
+        """
+        Retrieve a paginated set of bucketlist items.
+        """
         pagination_helper = PaginationHelper(
             request,
             query=Bucketlistitem.query,
@@ -255,6 +282,9 @@ class BucketListItemListResource(Resource):
 
     @jwt_required
     def post(self):
+        """
+        Create a new bucketlist item.
+        """
         request_dict = request.get_json()
         if not request_dict:
             response = {'error': 'No input data provided'}
