@@ -96,7 +96,7 @@ class Bucketlist(db.Model, AddUpdateDelete):
 class BucketListSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     bkt_name = fields.String(required=True, validate=validate.Length(3))
-    user = fields.Nested('UserSchema', only=['id', 'url', 'name'], required=True)
+    user = fields.Nested('UserSchema', only=['id', 'url', 'username'], required=True)
     bucket_items = fields.Nested('BucketListItemSchema', many=True, exclude=('bucketlist',))
     url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
 
