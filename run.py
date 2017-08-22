@@ -3,14 +3,23 @@ from datetime import timedelta
 from flask import request, jsonify
 from app import create_app
 from flask_jwt_extended import (JWTManager,
-                                create_access_token, get_jwt_identity)
+                                create_access_token, get_jwt_identity,
+                                get_jwt_claims)
 from views import authenticate
 from models import User
 import views
 import status
 
 app = create_app('config')
-# jwt = JWT(app, views.authenticate, views.identity)
+
+# The logged in user credentials are needed to
+# access the current user's information.
+
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(user_id, username):
+    data = {'user_id': user_id, 'username': username}
+    return data
 
 
 @app.route('/api/v1/auth/login/', methods=['POST'])
