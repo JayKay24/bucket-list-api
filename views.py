@@ -229,7 +229,7 @@ class BucketListItemResource(Resource):
         bucketlist = Bucketlist.query.filter_by(bkt_id=bkt_id).first()
         if bucketlist is None:
             response = {"error": "No bucketlist by that name exists"}
-            return response, status.HTTP_400_BAD_REQUEST
+            return response, status.HTTP_404_NOT_FOUND
         bucket_list_item = Bucketlistitem.query.filter_by(
             bkt_item_id=bkt_item_id).first()
         if bucket_list_item is None:
@@ -239,11 +239,13 @@ class BucketListItemResource(Resource):
         return result
 
     @jwt_required
-    def patch(self, id):
+    def patch(self, bkt_id, bkt_item_id):
         """
         Modify a bucketlist item with the specified id.
         """
-        print("start")
+        bucketlist = Bucketlist.query.filter_by(bkt_id=bkt_id).first()
+        if bucketlist is None:
+
         bucketlist_item = Bucketlistitem.query.get_or_404(id)
         bucketlist_item_dict = request.get_json(force=True)
         # bucketlist_item_dict = request.get_json()
