@@ -10,14 +10,15 @@ import views
 import status
 
 app = create_app('config')
+jwt = JWTManager(app)
 
 # The logged in user credentials are needed to
 # access the current user's information.
 
 
 @jwt.user_claims_loader
-def add_claims_to_access_token(user_id, username):
-    data = {'user_id': user_id, 'username': username}
+def add_claims_to_access_token(username):
+    data = {'username': username}
     return data
 
 
@@ -33,21 +34,20 @@ def login():
             response = jsonify({"error": "No user by that name exists"})
             return response, status.HTTP_400_BAD_REQUEST
         if user.verify_password(password):
+            # The token should be valid for at least 2 hours to
+            # avoid numerous logins.
             expiration_time = timedelta(hours=2)
-            token = create_access_token(identity=username,
+            token = create_access_token(identity=user.username,
                                         expires_delta=expiration_time)
             # The subsequent requests after successfully generating
             # an authentication token should be for only the logged
             # in user.
-            add_claims_to_access_token(user.id, user.username)
-            response = jsonify({"token": token})
+            response = jsonify({"access_token": token})
             return response, status.HTTP_200_OK
         else:
             response = jsonify({'error': 'Incorrect password'})
             return response, status.HTTP_400_BAD_REQUEST
 
-
-jwt = JWTManager(app)
 
 if __name__ == '__main__':
     app.run(host=app.config['HOST'],

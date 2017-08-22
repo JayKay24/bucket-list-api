@@ -353,5 +353,6 @@ api.add_resource(UserResource, '/auth/users/<int:id>')
 api.add_resource(BucketListListResource, '/bucketlists/')
 api.add_resource(BucketListResource, '/bucketlists/<int:id>')
 api.add_resource(BucketListItemListResource,
-                 'bucketlists/<int:id>/bucketlistitems/')
-api.add_resource(BucketListItemResource, '/bucketlistitems/<int:id>')
+                 '/bucketlists/<int:id>/bucketlistitems/')
+api.add_resource(BucketListItemResource,
+                 '/bucketlists/<int:id>/bucketlistitems/<int:id>')
