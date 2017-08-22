@@ -1,13 +1,13 @@
 import status
 from datetime import timedelta
-from flask_jwt_extended import get_jwt_claims
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
 from models import (db, User, UserSchema, Bucketlist,
                     BucketListSchema, Bucketlistitem, BucketListItemSchema)
 from sqlalchemy.exc import SQLAlchemyError
 from helpers import PaginationHelper
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import (jwt_required, get_jwt_identity,
+                                get_jwt_claims)
 from models import User, UserSchema
 
 
@@ -99,9 +99,15 @@ class BucketListResource(Resource):
         """
         Retrieve a bucketlist with the specified id.
         """
-        bucketlist = Bucketlist.query.get_or_404(id)
+        claims = get_jwt_claims()
+        user = User.query.filter_by(username=claims['username']).first()
+        bucketlist = Bucketlist.query.filter(
+            Bucketlist.user_id == user.id & Bucketlist.id == id)
+        if not bucketlist:
+            response = {"error": "No bucketlist matches that id"}
+            return response, status.HTTP_404_NOT_FOUND
         result = bucketlist_schema.dump(bucketlist).data
-        return result
+        return result, status.HTTP_200_OK
 
     @jwt_required
     def patch(self, id):
@@ -157,10 +163,10 @@ class BucketListListResource(Resource):
         Retrieve a paginated set of bucketlists.
         """
         claims = get_jwt_claims()
+        user = User.query.filter_by(username=claims['username']).first()
         pagination_helper = PaginationHelper(
             request,
-            query=Bucketlist.query.filter(
-                Bucketlist.user_id == claims['user_id']),
+            query=Bucketlist.query.filter(Bucketlist.user_id == user.id),
             resource_for_url='api.bucketlistlistresource',
             key_name='results',
             schema=bucketlist_schema
@@ -287,13 +293,17 @@ class BucketListItemResource(Resource):
 
 class BucketListItemListResource(Resource):
     @jwt_required
-    def get(self):
+    def get(self, id):
         """
         Retrieve a paginated set of bucketlist items.
         """
+        bucketlist = Bucketlist.query.get_or_404(id)
+        if bucketlist is None:
+            response = {"error": "No bucketlist by that id exists"}
+            return response, status.HTTP_400_BAD_REQUEST
         pagination_helper = PaginationHelper(
             request,
-            query=Bucketlistitem.query,
+            query=Bucketlistitem.query.filter_by(Bucketlistitem.bkt_id == id)
             resource_for_url='api.bucketlistitemlistresource',
             key_name='result',
             schema=bucketlist_item_schema
@@ -342,5 +352,6 @@ api.add_resource(UserListResource, '/auth/register/')
 api.add_resource(UserResource, '/auth/users/<int:id>')
 api.add_resource(BucketListListResource, '/bucketlists/')
 api.add_resource(BucketListResource, '/bucketlists/<int:id>')
-api.add_resource(BucketListItemListResource, '/bucketlistitems/')
+api.add_resource(BucketListItemListResource,
+                 'bucketlists/<int:id>/bucketlistitems/')
 api.add_resource(BucketListItemResource, '/bucketlistitems/<int:id>')
