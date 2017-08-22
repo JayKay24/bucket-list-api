@@ -222,11 +222,19 @@ class BucketListListResource(Resource):
 
 class BucketListItemResource(Resource):
     @jwt_required
-    def get(self, id):
+    def get(self, bkt_id, bkt_item_id):
         """
         Retrieve a bucketlist item with the specified id.
         """
-        bucket_list_item = Bucketlistitem.query.get_or_404(id)
+        bucketlist = Bucketlist.query.filter_by(bkt_id=bkt_id).first()
+        if bucketlist is None:
+            response = {"error": "No bucketlist by that name exists"}
+            return response, status.HTTP_400_BAD_REQUEST
+        bucket_list_item = Bucketlistitem.query.filter_by(
+            bkt_item_id=bkt_item_id).first()
+        if bucket_list_item is None:
+            response = {"error": "No bucketlist item by that name exists"}
+            return response, status.HTTP_400_BAD_REQUEST
         result = bucketlist_item_schema.dump(bucket_list_item).data
         return result
 
@@ -297,7 +305,7 @@ class BucketListItemListResource(Resource):
         """
         Retrieve a paginated set of bucketlist items.
         """
-        bucketlist = Bucketlist.query.get_or_404(id)
+        bucketlist = Bucketlist.query.get_or
         if bucketlist is None:
             response = {"error": "No bucketlist by that id exists"}
             return response, status.HTTP_400_BAD_REQUEST
@@ -355,4 +363,4 @@ api.add_resource(BucketListResource, '/bucketlists/<int:id>')
 api.add_resource(BucketListItemListResource,
                  '/bucketlists/<int:id>/bucketlistitems/')
 api.add_resource(BucketListItemResource,
-                 '/bucketlists/<int:id>/bucketlistitems/<int:id>')
+                 '/bucketlists/<int:bkt_id>/bucketlistitems/<int:bkt_item_id>')
