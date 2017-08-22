@@ -36,6 +36,10 @@ def login():
             expiration_time = timedelta(hours=2)
             token = create_access_token(identity=username,
                                         expires_delta=expiration_time)
+            # The subsequent requests after successfully generating
+            # an authentication token should be for only the logged
+            # in user.
+            add_claims_to_access_token(user.id, user.username)
             response = jsonify({"token": token})
             return response, status.HTTP_200_OK
         else:
