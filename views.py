@@ -1,11 +1,11 @@
-import json
+import status
 from datetime import timedelta
+from flask_jwt_extended import get_jwt_claims
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
 from models import (db, User, UserSchema, Bucketlist,
                     BucketListSchema, Bucketlistitem, BucketListItemSchema)
 from sqlalchemy.exc import SQLAlchemyError
-import status
 from helpers import PaginationHelper
 from flask_jwt_extended import jwt_required
 from models import User, UserSchema
@@ -59,11 +59,11 @@ class UserListResource(Resource):
             response = {'user': 'No input data provided'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
-            confirm_password = request_dict['confirm_password']
-            if confirm_password != request_dict['password']:
-                response = {'error': 'Passwords do not match'}
-                return response, status.HTTP_400_BAD_REQUEST
-        except KeyError as e:
+            if request_dict['password'] and request_dict['confirm_password']:
+                if request_dict['password'] != request_dict['confirm_password']:
+                    response = {'error': 'Passwords do not match'}
+                    return response, status.HTTP_400_BAD_REQUEST
+        except KeyError:
             response = {
                 'error': 'Please confirm your password before registering'}
             return response, status.HTTP_400_BAD_REQUEST
@@ -156,9 +156,11 @@ class BucketListListResource(Resource):
         """
         Retrieve a paginated set of bucketlists.
         """
+        claims = get_jwt_claims()
         pagination_helper = PaginationHelper(
             request,
-            query=Bucketlist.query,
+            query=Bucketlist.query.filter(
+                Bucketlist.user_id == claims['user_id']),
             resource_for_url='api.bucketlistlistresource',
             key_name='results',
             schema=bucketlist_schema
