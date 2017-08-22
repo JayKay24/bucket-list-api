@@ -8,11 +8,13 @@ from passlib.apps import custom_app_context as password_context
 db = SQLAlchemy()
 ma = Marshmallow()
 
+
 class AddUpdateDelete:
     """
     Helper class to manage add, update, delete functions
     of the database.
     """
+
     def add(self, resource):
         db.session.add(resource)
         return db.session.commit()
@@ -24,12 +26,13 @@ class AddUpdateDelete:
         db.session.delete(resource)
         return db.session.commit()
 
+
 class User(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     hashed_password = db.Column(db.String(120), nullable=False)
-    creation_date = db.Column(db.TIMESTAMP, 
-        server_default=db.func.current_timestamp(), nullable=False)
+    creation_date = db.Column(db.TIMESTAMP,
+                              server_default=db.func.current_timestamp(), nullable=False)
 
     def verify_password(self, password):
         return password_context.verify(password, self.hashed_password)
@@ -45,7 +48,7 @@ class User(db.Model, AddUpdateDelete):
             return 'The password must include at least one lowercase letter', False
         if re.search(r'\d', password) is None:
             return 'The password must include at least one number', False
-        if re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', password) is None:
+        if re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~" + r'"]', password) is None:
             return 'The password must include at least one symbol', False
         self.hashed_password = password_context.encrypt(password)
         return '', True
@@ -64,20 +67,23 @@ class User(db.Model, AddUpdateDelete):
             else:
                 return False
 
+
 class UserSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     username = fields.String(required=True, validate=validate.Length(3))
-    bucketlists = fields.Nested('BucketListSchema', many=True, exclude=('user',))
+    bucketlists = fields.Nested(
+        'BucketListSchema', many=True, exclude=('user',))
     url = ma.URLFor('api.userresource', id='<id>', _external=True)
+
 
 class Bucketlist(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
     bkt_name = db.Column(db.String(150), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id',
-        ondelete='CASCADE'), nullable=False)
+                                                  ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('bucketlists',
-        lazy='dynamic', order_by='Bucketlist.bkt_name'))
-    
+                                                      lazy='dynamic', order_by='Bucketlist.bkt_name'))
+
     def __init__(self, bkt_name, user):
         self.bkt_name = bkt_name
         self.user = user
@@ -93,35 +99,40 @@ class Bucketlist(db.Model, AddUpdateDelete):
             else:
                 return False
 
+
 class BucketListSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     bkt_name = fields.String(required=True, validate=validate.Length(3))
-    user = fields.Nested('UserSchema', only=['id', 'url', 'username'], required=True)
-    bucket_items = fields.Nested('BucketListItemSchema', many=True, exclude=('bucketlist',))
+    user = fields.Nested('UserSchema', only=[
+                         'id', 'url', 'username'], required=True)
+    bucket_items = fields.Nested(
+        'BucketListItemSchema', many=True, exclude=('bucketlist',))
     url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
+
 
 class Bucketlistitem(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
     bkt_item_name = db.Column(db.String(150), unique=True, nullable=False)
     bkt_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id',
-        ondelete='CASCADE'), nullable=False)
+                                                 ondelete='CASCADE'), nullable=False)
     bucketlist = db.relationship('Bucketlist', backref=db.backref('bucket_list_items',
-        lazy='dynamic', order_by='Bucketlistitem.bkt_item_name'))
+                                                                  lazy='dynamic', order_by='Bucketlistitem.bkt_item_name'))
 
     def __init__(self, bkt_item_name, bucketlist):
         self.bkt_item_name = bkt_item_name
         self.bucketlist = bucketlist
 
-    @classmethod
-    def is_unique(cls, id, bkt_item_name):
-        existing_bucketlist_item = cls.query.filter_by(bkt_item_name=bkt_item_name).first()
-        if existing_bucketlist_item is None:
-            return True
-        else:
-            if existing_bucketlist_item.id == id:
-                return True
-            else:
-                return False
+    # @classmethod
+    # def is_unique(cls, id, bkt_item_name):
+    #     existing_bucketlist_item = cls.query.filter_by(bkt_item_name=bkt_item_name).first()
+    #     if existing_bucketlist_item is None:
+    #         return True
+    #     else:
+    #         if existing_bucketlist_item.id == id:
+    #             return True
+    #         else:
+    #             return False
+
 
 class BucketListItemSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
@@ -129,7 +140,3 @@ class BucketListItemSchema(ma.Schema):
     bkt_name = fields.String(required=True, validate=validate.Length(3))
     bucketlist = fields.Nested('BucketListSchema', only=['id', 'bkt_name'])
     url = ma.URLFor('api.bucketlistitemresource', id='<id>', _external=True)
-
-
-
-
