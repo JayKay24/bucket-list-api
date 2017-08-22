@@ -314,7 +314,7 @@ class BucketListItemListResource(Resource):
             return response, status.HTTP_404_NOT_FOUND
         pagination_helper = PaginationHelper(
             request,
-            query=Bucketlistitem.query.filter_by(
+            query=Bucketlistitem.query.filter(
                 Bucketlistitem.bkt_id == bkt_id),
             resource_for_url='api.bucketlistitemlistresource',
             key_name='result',
