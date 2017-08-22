@@ -95,14 +95,14 @@ class UserListResource(Resource):
 
 class BucketListResource(Resource):
     @jwt_required
-    def get(self, id):
+    def get(self, bkt_id):
         """
         Retrieve a bucketlist with the specified id.
         """
         claims = get_jwt_claims()
         user = User.query.filter_by(username=claims['username']).first()
         bucketlist = Bucketlist.query.filter(
-            Bucketlist.user_id == user.id & Bucketlist.id == id)
+            Bucketlist.user_id == user.id & Bucketlist.id == bkt_id)
         if not bucketlist:
             response = {"error": "No bucketlist matches that id"}
             return response, status.HTTP_404_NOT_FOUND
@@ -279,7 +279,7 @@ class BucketListItemResource(Resource):
             return validate_errors, status.HTTP_400_BAD_REQUEST
         try:
             bucketlist_item.update()
-            return self.get(id)
+            return self.get(bkt_id, bkt_item_id)
         except SQLAlchemyError as e:
             db.session.rollback()
             resp = jsonify({"error": str(e)})
@@ -363,7 +363,7 @@ class BucketListItemListResource(Resource):
 api.add_resource(UserListResource, '/auth/register/')
 api.add_resource(UserResource, '/auth/users/<int:id>')
 api.add_resource(BucketListListResource, '/bucketlists/')
-api.add_resource(BucketListResource, '/bucketlists/<int:id>')
+api.add_resource(BucketListResource, '/bucketlists/<int:bkt_id>')
 api.add_resource(BucketListItemListResource,
                  '/bucketlists/<int:bkt_id>/bucketlistitems/')
 api.add_resource(BucketListItemResource,
