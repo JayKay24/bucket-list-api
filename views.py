@@ -133,7 +133,7 @@ class BucketListResource(Resource):
         bucketlist = Bucketlist.query.get_or_404(id)
         try:
             bucketlist.delete(bucketlist)
-            # response = {"message": "The bucketlist has been successfully deleted"}
+            response = {"message": "The bucketlist has been successfully deleted"}
             return '', status.HTTP_204_NO_CONTENT
         except SQLAlchemyError as e:
             db.session.rollback()

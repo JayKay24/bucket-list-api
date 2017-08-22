@@ -97,7 +97,7 @@ class BucketListSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     bkt_name = fields.String(required=True, validate=validate.Length(3))
     url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
-    user = fields.Nested('UserSchema', only=['id', 'url', 'name'])
+    user = fields.Nested('UserSchema', only=['id', 'url', 'name'], required=True)
     bucket_items = fields.Nested('BucketListItemSchema', many=True, exclude=('bucketlist',))
 
 class Bucketlistitem(db.Model, AddUpdateDelete):
@@ -127,6 +127,7 @@ class BucketListItemSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     bkt_item_name = fields.String(required=True, validate=validate.Length(3))
     bkt_name = fields.String(required=True, validate=validate.Length(3))
+    bucketlist = fields.Nested('BucketListSchema', only=['id', 'bkt_name'])
     url = ma.URLFor('api.bucketlistitemresource', id='<id>', _external=True)
 
 
