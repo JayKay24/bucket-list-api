@@ -245,34 +245,35 @@ class BucketListItemResource(Resource):
         """
         bucketlist = Bucketlist.query.filter_by(bkt_id=bkt_id).first()
         if bucketlist is None:
-
-        bucketlist_item = Bucketlistitem.query.get_or_404(id)
+            response = {"error": "No bucketlist by that name exists"}
+            return response, status.HTTP_404_NOT_FOUND
+        bucketlist_item = Bucketlistitem.query.filter_by(
+            bkt_item_id=bkt_item_id)
+        if bucketlist_item is None:
+            response = {"error": "No bucketlist item by that name exists"}
+            return response, status.HTTP_404_NOT_FOUND
         bucketlist_item_dict = request.get_json(force=True)
-        # bucketlist_item_dict = request.get_json()
-        print(bucketlist_item_dict)
         if 'bkt_item_name' in bucketlist_item_dict:
-            bucketitem_bucketitem = bucketlist_item_dict['bkt_item_name']
-            if Bucketlistitem.is_unique(id=id, bkt_item_name=bucketitem_bucketitem):
-                bucketlist_item.bkt_item_name = bucketitem_bucketitem
-            else:
+            if request_dict['bkt_item_name'] == bucketlist_item.bkt_item_name:
                 response = {
-                    "error": "A bucketlist item with the same name already exists"}
-                return response, status.HTTP_400_BAD_REQUEST
-        if 'bkt_name' in bucketlist_item_dict:
-            bucketlist = Bucketlist.query.filter_by(
-                bkt_name=bucketlist_item_dict['bkt_name']).first()
-            if bucketlist is None:
-                response = {'error': 'No bucketlist by that name exists'}
-                return response, status.HTTP_400_BAD_REQUEST
-            else:
-                bucketlist_item.bucketlist = bucketlist
+                    "A bucketlist item with the same name already exists"}
+                return response, status.HTTP_409_CONFLICT
+            bucketlist_item.bkt_item_name = request_dict['bkt_item_name']
+        # if 'bkt_name' in bucketlist_item_dict:
+        #     bucketlist = Bucketlist.query.filter_by(
+        #         bkt_name=bucketlist_item_dict['bkt_name']).first()
+        #     if bucketlist is None:
+        #         response = {'error': 'No bucketlist by that name exists'}
+        #         return response, status.HTTP_400_BAD_REQUEST
+        #     else:
+        #         bucketlist_item.bucketlist = bucketlist
         dumped_bucketlist_item, dump_errors = bucketlist_item_schema.dump(
             bucketlist_item)
         if dump_errors:
             return dump_errors, status.HTTP_400_BAD_REQUEST
 
-        dumped_bucketlist_item['bkt_name'] = Bucketlistitem.query.get(
-            id).bucketlist.bkt_name
+        # dumped_bucketlist_item['bkt_name'] = Bucketlistitem.query.get(
+        #     id).bucketlist.bkt_name
         validate_errors = bucketlist_schema.validate(dumped_bucketlist_item)
         if validate_errors:
             return validate_errors, status.HTTP_400_BAD_REQUEST
@@ -303,17 +304,18 @@ class BucketListItemResource(Resource):
 
 class BucketListItemListResource(Resource):
     @jwt_required
-    def get(self, id):
+    def get(self, bkt_id):
         """
         Retrieve a paginated set of bucketlist items.
         """
-        bucketlist = Bucketlist.query.get_or
+        bucketlist = Bucketlist.query.filter_by(bkt_id=bkt_id).first()
         if bucketlist is None:
             response = {"error": "No bucketlist by that id exists"}
-            return response, status.HTTP_400_BAD_REQUEST
+            return response, status.HTTP_404_NOT_FOUND
         pagination_helper = PaginationHelper(
             request,
-            query=Bucketlistitem.query.filter_by(Bucketlistitem.bkt_id == id)
+            query=Bucketlistitem.query.filter_by(
+                Bucketlistitem.bkt_id == bkt_id),
             resource_for_url='api.bucketlistitemlistresource',
             key_name='result',
             schema=bucketlist_item_schema
@@ -363,6 +365,6 @@ api.add_resource(UserResource, '/auth/users/<int:id>')
 api.add_resource(BucketListListResource, '/bucketlists/')
 api.add_resource(BucketListResource, '/bucketlists/<int:id>')
 api.add_resource(BucketListItemListResource,
-                 '/bucketlists/<int:id>/bucketlistitems/')
+                 '/bucketlists/<int:bkt_id>/bucketlistitems/')
 api.add_resource(BucketListItemResource,
                  '/bucketlists/<int:bkt_id>/bucketlistitems/<int:bkt_item_id>')
