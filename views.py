@@ -2,13 +2,14 @@ import json
 from datetime import timedelta
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
-from models import (db, User, UserSchema, Bucketlist, 
-    BucketListSchema, Bucketlistitem, BucketListItemSchema)
+from models import (db, User, UserSchema, Bucketlist,
+                    BucketListSchema, Bucketlistitem, BucketListItemSchema)
 from sqlalchemy.exc import SQLAlchemyError
 import status
 from helpers import PaginationHelper
 from flask_jwt_extended import jwt_required
 from models import User, UserSchema
+
 
 def authenticate(username, password):
     if not (username and password):
@@ -18,17 +19,20 @@ def authenticate(username, password):
         return False
     return True
 
+
 api_bp = Blueprint('api', __name__)
 user_schema = UserSchema()
 bucketlist_schema = BucketListSchema()
 bucketlist_item_schema = BucketListItemSchema()
 api = Api(api_bp)
 
+
 class UserResource(Resource):
     def get(self, id):
         user = User.query.get_or_404(id)
         result = user_schema.dump(user).data
         return result
+
 
 class UserListResource(Resource):
     @jwt_required
@@ -60,7 +64,8 @@ class UserListResource(Resource):
                 response = {'error': 'Passwords do not match'}
                 return response, status.HTTP_400_BAD_REQUEST
         except KeyError as e:
-            response = {'error': 'Please confirm your password before registering'}
+            response = {
+                'error': 'Please confirm your password before registering'}
             return response, status.HTTP_400_BAD_REQUEST
         errors = user_schema.validate(request_dict)
         if errors:
@@ -73,7 +78,8 @@ class UserListResource(Resource):
         try:
             user = User(username=username)
             error_message, password_ok = \
-            user.check_password_strength_and_hash_if_ok(request_dict['password'])
+                user.check_password_strength_and_hash_if_ok(
+                    request_dict['password'])
             if password_ok:
                 user.add(user)
                 query = User.query.get(user.id)
@@ -85,6 +91,7 @@ class UserListResource(Resource):
             db.session.rollback()
             resp = {'error': str(e)}
             return resp, status.HTTP_400_BAD_REQUEST
+
 
 class BucketListResource(Resource):
     @jwt_required
@@ -108,7 +115,8 @@ class BucketListResource(Resource):
             if Bucketlist.is_unique(id=id, bkt_name=bucketlist_bucketlist):
                 bucketlist.bkt_name = bucketlist_bucketlist
             else:
-                response = {'error': 'A bucketlist with the same name already exists'}
+                response = {
+                    'error': 'A bucketlist with the same name already exists'}
                 return response, status.HTTP_400_BAD_REQUEST
         dumped_bucketlist, dump_errors = bucketlist_schema.dump(bucketlist)
         if dump_errors:
@@ -133,12 +141,14 @@ class BucketListResource(Resource):
         bucketlist = Bucketlist.query.get_or_404(id)
         try:
             bucketlist.delete(bucketlist)
-            response = {"message": "The bucketlist has been successfully deleted"}
+            response = {
+                "message": "The bucketlist has been successfully deleted"}
             return '', status.HTTP_204_NO_CONTENT
         except SQLAlchemyError as e:
             db.session.rollback()
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_401_UNAUTHORIZED
+
 
 class BucketListListResource(Resource):
     @jwt_required
@@ -170,22 +180,25 @@ class BucketListListResource(Resource):
             return errors, status.HTTP_400_BAD_REQUEST
         bucketlist_name = request_dict['bkt_name']
         if not Bucketlist.is_unique(id=0, bkt_name=bucketlist_name):
-            response = {'error': 'A bucketlist with the same name already exists'}
+            response = {
+                'error': 'A bucketlist with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
             try:
                 username = request_dict['username']
             except KeyError as e:
-                response = {"error": "Please provide a user for the bucketlist"}
+                response = {
+                    "error": "Please provide a user for the bucketlist"}
                 return response, status.HTTP_400_BAD_REQUEST
             if not username:
-                response = {"error": "Please provide a user for the bucketlist"}
+                response = {
+                    "error": "Please provide a user for the bucketlist"}
                 return response, status.HTTP_400_BAD_REQUEST
             user = User.query.filter_by(username=username).first()
             if user is None:
                 response = {"error": "No user with that name exists"}
                 return response, status.HTTP_400_BAD_REQUEST
-            
+
             bucketlist = Bucketlist(
                 bkt_name=bucketlist_name,
                 user=user)
@@ -197,6 +210,7 @@ class BucketListListResource(Resource):
             db.session.rollback()
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
+
 
 class BucketListItemResource(Resource):
     @jwt_required
@@ -223,20 +237,24 @@ class BucketListItemResource(Resource):
             if Bucketlistitem.is_unique(id=id, bkt_item_name=bucketitem_bucketitem):
                 bucketlist_item.bkt_item_name = bucketitem_bucketitem
             else:
-                response = {"error": "A bucketlist item with the same name already exists"}
+                response = {
+                    "error": "A bucketlist item with the same name already exists"}
                 return response, status.HTTP_400_BAD_REQUEST
         if 'bkt_name' in bucketlist_item_dict:
-            bucketlist = Bucketlist.query.filter_by(bkt_name=bucketlist_item_dict['bkt_name']).first()
+            bucketlist = Bucketlist.query.filter_by(
+                bkt_name=bucketlist_item_dict['bkt_name']).first()
             if bucketlist is None:
                 response = {'error': 'No bucketlist by that name exists'}
                 return response, status.HTTP_400_BAD_REQUEST
             else:
                 bucketlist_item.bucketlist = bucketlist
-        dumped_bucketlist_item, dump_errors = bucketlist_item_schema.dump(bucketlist_item)
+        dumped_bucketlist_item, dump_errors = bucketlist_item_schema.dump(
+            bucketlist_item)
         if dump_errors:
             return dump_errors, status.HTTP_400_BAD_REQUEST
 
-        dumped_bucketlist_item['bkt_name'] = Bucketlistitem.query.get(id).bucketlist.bkt_name
+        dumped_bucketlist_item['bkt_name'] = Bucketlistitem.query.get(
+            id).bucketlist.bkt_name
         validate_errors = bucketlist_schema.validate(dumped_bucketlist_item)
         if validate_errors:
             return validate_errors, status.HTTP_400_BAD_REQUEST
@@ -263,6 +281,7 @@ class BucketListItemResource(Resource):
             db.session.rollback()
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
+
 
 class BucketListItemListResource(Resource):
     @jwt_required
@@ -294,7 +313,8 @@ class BucketListItemListResource(Resource):
             return errors, status.HTTP_400_BAD_REQUEST
         bucketlist_item_name = request_dict['bkt_item_name']
         if not Bucketlistitem.is_unique(id=0, bkt_item_name=bucketlist_item_name):
-            response = {'error': 'A bucketlist item with the same name already exists'}
+            response = {
+                'error': 'A bucketlist item with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
             bkt_name = request_dict['bkt_name']
@@ -314,6 +334,7 @@ class BucketListItemListResource(Resource):
             db.session.rollback()
             resp = jsonify({"error": str(e)})
             return resp, status.HTTP_400_BAD_REQUEST
+
 
 api.add_resource(UserListResource, '/auth/register/')
 api.add_resource(UserResource, '/auth/users/<int:id>')

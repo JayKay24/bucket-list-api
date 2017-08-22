@@ -2,6 +2,7 @@ from flask import Flask
 from models import db
 from views import api_bp
 
+
 def create_app(config_filename):
     """
     Create a flask application instance using configurations obtained
@@ -14,5 +15,3 @@ def create_app(config_filename):
     app.register_blueprint(api_bp, url_prefix='/api/v1')
 
     return app
-
-
