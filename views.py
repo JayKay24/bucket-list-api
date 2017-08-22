@@ -308,7 +308,7 @@ class BucketListItemListResource(Resource):
         """
         Retrieve a paginated set of bucketlist items.
         """
-        bucketlist = Bucketlist.query.filter_by(bkt_id=bkt_id).first()
+        bucketlist = Bucketlist.query.filter_by(id=bkt_id).first()
         if bucketlist is None:
             response = {"error": "No bucketlist by that id exists"}
             return response, status.HTTP_404_NOT_FOUND
