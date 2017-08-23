@@ -114,7 +114,10 @@ class BucketListResource(Resource):
         """
         Modify a bucketlist with the specified id.
         """
-        bucketlist = Bucketlist.query.get_or_404(id)
+        bucketlist = Bucketlist.query.filter_by(id=bkt_id).first()
+        if bucketlist is None:
+            response = {"error": "No bucketlist by that name exists"}
+            return response, status.HTTP_404_NOT_FOUND
         bucketlist_dict = request.get_json(force=True)
         if 'bkt_name' in bucketlist_dict:
             bucketlist_bucketlist = bucketlist_dict['bkt_name']
