@@ -27,17 +27,17 @@ class ViewsTests(unittest.TestCase):
     def get_accept_content_type_headers(self):
         return {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': ''
+            'Content-Type': 'application/json'
         }
 
     def get_authentication_headers(self, username, password):
         authentication_headers = self.get_accept_content_type_headers()
         authenticated = authenticate(username, password)
         if authenticated:
-            # expiration_time = timedelta(hours=2)
-            token = create_access_token(identity=username)
-            authentication_headers['Authorization'] = 'Bearer ' + token
+            expiration_time = timedelta(hours=2)
+            token = create_access_token(
+                identity=username, expires_delta=expiration_time)
+            authentication_headers['Authorization'] = 'Bearer ' + str(token)
         return authentication_headers
 
     def create_user(self, username, password):
@@ -67,6 +67,16 @@ class ViewsTests(unittest.TestCase):
             url,
             headers=self.get_authentication_headers(self.test_user_name,
                                                     self.test_user_password),
+            data=json.dumps(data))
+        return response
+
+    def login_user(self, username, password):
+        url = '/api/v1/auth/login/'
+        data = {username: 'username', password: 'password'}
+        response = self.test_client.post(
+            url,
+            headers=self.get_authentication_headers(
+                self.test_user_name, self.test_user_password),
             data=json.dumps(data))
         return response
 
@@ -105,11 +115,9 @@ class ViewsTests(unittest.TestCase):
         response = self.create_user(
             self.test_user_name, self.test_user_password)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.create_bucketlist(
-            "Extreme heights", self.test_user_name)
+        response = self.create_bucketlist("Extreme heights")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.create_bucketlist_item(
-            "Extreme heights", "Mount Everest")
+        response = self.create_bucketlist_item("Mount Everest")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_update_a_bucketlist(self):
