@@ -31,7 +31,7 @@ class ViewsTests(unittest.TestCase):
             'Content-Type': 'application/json'
         }
 
-    def get_authentication_headers(self, username, password):
+    def get_authentication_headers(self):
         authentication_headers = self.get_accept_content_type_headers()
         response = self.login_user(
             self.test_user_name, self.test_user_password)
@@ -45,7 +45,6 @@ class ViewsTests(unittest.TestCase):
         #     token = create_access_token(
         #         identity=username, expires_delta=expiration_time)
         #     authentication_headers['Authorization'] = 'Bearer ' + str(token)
-        return authentication_headers
 
     def create_user(self, username, password):
         url = url_for('api.userlistresource', _external=True)
@@ -108,12 +107,9 @@ class ViewsTests(unittest.TestCase):
         """
         Ensure an authenticated user can get a list of users.
         """
-        response = self.login_user(
-            self.test_user_name, self.test_user_password)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.test_client.get(
             url_for('api.userlistresource', _external=True),
-            headers=self.get
+            headers=self.get_authentication_headers()
         )
 
     def test_create_bucketlist(self):
