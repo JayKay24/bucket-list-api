@@ -6,7 +6,7 @@ from flask_jwt_extended import (JWTManager,
                                 create_access_token, get_jwt_identity)
 from views import authenticate
 from models import User
-import views
+# import views
 import status
 
 app = create_app('config')

@@ -100,16 +100,6 @@ class Bucketlist(db.Model, AddUpdateDelete):
                 return False
 
 
-class BucketListSchema(ma.Schema):
-    id = fields.Integer(dump_only=True)
-    bkt_name = fields.String(required=True, validate=validate.Length(3))
-    user = fields.Nested('UserSchema', only=[
-                         'id', 'url', 'username'], required=True)
-    bucket_items = fields.Nested(
-        'BucketListItemSchema', many=True, exclude=('bucketlist',))
-    url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
-
-
 class Bucketlistitem(db.Model, AddUpdateDelete):
     id = db.Column(db.Integer, primary_key=True)
     bkt_item_name = db.Column(db.String(150), unique=True, nullable=False)
@@ -122,21 +112,34 @@ class Bucketlistitem(db.Model, AddUpdateDelete):
         self.bkt_item_name = bkt_item_name
         self.bucketlist = bucketlist
 
-    # @classmethod
-    # def is_unique(cls, id, bkt_item_name):
-    #     existing_bucketlist_item = cls.query.filter_by(bkt_item_name=bkt_item_name).first()
-    #     if existing_bucketlist_item is None:
-    #         return True
-    #     else:
-    #         if existing_bucketlist_item.id == id:
-    #             return True
-    #         else:
-    #             return False
+    @classmethod
+    def is_unique(cls, id, bkt_item_name):
+        existing_bucketlist_item = cls.query.filter_by(
+            bkt_item_name=bkt_item_name).first()
+        if existing_bucketlist_item is None:
+            return True
+        else:
+            if existing_bucketlist_item.id == id:
+                return True
+            else:
+                return False
+
+
+class BucketListSchema(ma.Schema):
+    id = fields.Integer(dump_only=True)
+    bkt_name = fields.String(required=True, validate=validate.Length(3))
+    user = fields.Nested('UserSchema', only=[
+                         'id', 'url', 'username'], required=True)
+    bucket_items = fields.Nested(
+        'BucketListItemSchema', many=True, exclude=('bucketlist',))
+    url = ma.URLFor('api.bucketlistresource', id='<id>', _external=True)
 
 
 class BucketListItemSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
     bkt_item_name = fields.String(required=True, validate=validate.Length(3))
     bkt_name = fields.String(required=True, validate=validate.Length(3))
-    bucketlist = fields.Nested('BucketListSchema', only=['id', 'bkt_name'])
-    url = ma.URLFor('api.bucketlistitemresource', id='<id>', _external=True)
+    bucketlist = fields.Nested('BucketListSchema', only=[
+                               'id', 'bkt_name'], required=True)
+    url = ma.URLFor('api.bucketlistitemresource', bkt_id='<bkt_id>',
+                    id='<id>', _external=True)
