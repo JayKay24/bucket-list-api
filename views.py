@@ -197,22 +197,8 @@ class BucketListListResource(Resource):
                 'error': 'A bucketlist with the same name already exists'}
             return response, status.HTTP_400_BAD_REQUEST
         try:
-            # try:
-            #     username = request_dict['username']
-            # except KeyError as e:
-            #     response = {
-            #         "error": "Please provide a user for the bucketlist"}
-            #     return response, status.HTTP_400_BAD_REQUEST
-            # if not username:
-            #     response = {
-            #         "error": "Please provide a user for the bucketlist"}
-            #     return response, status.HTTP_400_BAD_REQUEST
-            # user = User.query.filter_by(username=username).first()
             claims = get_jwt_claims()
             user = User.query.filter_by(username=claims['username']).first()
-            # if user is None:
-            #     response = {"error": "No user with that name exists"}
-            #     return response, status.HTTP_400_BAD_REQUEST
             bucketlist = Bucketlist(
                 bkt_name=bucketlist_name,
                 user=user)
