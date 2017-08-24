@@ -126,7 +126,7 @@ class BucketListResource(Resource):
             else:
                 response = {
                     'error': 'A bucketlist with the same name already exists'}
-                return response, status.HTTP_400_BAD_REQUEST
+                return response, status.HTTP_409_CONFLICT
         dumped_bucketlist, dump_errors = bucketlist_schema.dump(bucketlist)
         if dump_errors:
             return dump_errors, status.HTTP_400_BAD_REQUEST
