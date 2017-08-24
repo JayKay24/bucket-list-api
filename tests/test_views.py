@@ -52,7 +52,7 @@ class ViewsTests(unittest.TestCase):
 
     def create_bucketlist(self, bkt_name):
         url = url_for('api.bucketlistlistresource', _external=True)
-        data = {bkt_name': bkt_name}
+        data = {'bkt_name': bkt_name}
         response = self.test_client.post(
             url,
             headers=self.get_authentication_headers(self.test_user_name,
@@ -95,8 +95,7 @@ class ViewsTests(unittest.TestCase):
         response = self.create_user(
             self.test_user_name, self.test_user_password)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response = self.create_bucketlist(
-            "Extreme heights", self.test_user_name)
+        response = self.create_bucketlist("Extreme heights")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_bucketlist_item(self):
