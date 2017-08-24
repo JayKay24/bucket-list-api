@@ -101,18 +101,6 @@ class Bucketlistitem(db.Model, AddUpdateDelete):
         self.bkt_item_name = bkt_item_name
         self.bucketlist = bucketlist
 
-    @classmethod
-    def is_unique(cls, id, bkt_item_name):
-        existing_bucketlist_item = cls.query.filter_by(
-            bkt_item_name=bkt_item_name).first()
-        if existing_bucketlist_item is None:
-            return True
-        else:
-            if existing_bucketlist_item.id == id:
-                return True
-            else:
-                return False
-
 
 class BucketListSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
