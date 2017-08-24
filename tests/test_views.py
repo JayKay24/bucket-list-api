@@ -38,6 +38,7 @@ class ViewsTests(unittest.TestCase):
         response_data = json.loads(response.get_data(as_text=True))
         authentication_headers['Authorization'] = 'Bearer ' + \
             response_data['access_token']
+        print(authentication_headers)
         return authentication_headers
         # authenticated = authenticate(username, password)
         # if authenticated:
