@@ -18,6 +18,7 @@ class ViewsTests(unittest.TestCase):
         self.test_user_name = 'Kryptonian'
         self.test_user_password = 'Kryptonian832!'
         db.create_all()
+        self.create_user(self.test_user_name, self.test_user_password)
 
     def tearDown(self):
         db.session.remove()
@@ -32,12 +33,18 @@ class ViewsTests(unittest.TestCase):
 
     def get_authentication_headers(self, username, password):
         authentication_headers = self.get_accept_content_type_headers()
-        authenticated = authenticate(username, password)
-        if authenticated:
-            expiration_time = timedelta(hours=2)
-            token = create_access_token(
-                identity=username, expires_delta=expiration_time)
-            authentication_headers['Authorization'] = 'Bearer ' + str(token)
+        response = self.login_user(
+            self.test_user_name, self.test_user_password)
+        response_data = json.loads(response.get_data(as_text=True))
+        authentication_headers['Authorization'] = 'Bearer ' + \
+            response_data['access_token']
+        return authentication_headers
+        # authenticated = authenticate(username, password)
+        # if authenticated:
+        #     expiration_time = timedelta(hours=2)
+        #     token = create_access_token(
+        #         identity=username, expires_delta=expiration_time)
+        #     authentication_headers['Authorization'] = 'Bearer ' + str(token)
         return authentication_headers
 
     def create_user(self, username, password):
@@ -84,8 +91,7 @@ class ViewsTests(unittest.TestCase):
         """
         Ensure we can register a user with the application.
         """
-        response = self.create_user(
-            self.test_user_name, self.test_user_password)
+        response = self.create_user("James", "James832!")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_users_without_authentication(self):
@@ -97,6 +103,18 @@ class ViewsTests(unittest.TestCase):
             url_for('api.userlistresource', _external=True),
             headers=self.get_accept_content_type_headers())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_users_with_authentication(self):
+        """
+        Ensure an authenticated user can get a list of users.
+        """
+        response = self.login_user(
+            self.test_user_name, self.test_user_password)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.test_client.get(
+            url_for('api.userlistresource', _external=True),
+            headers=self.get
+        )
 
     def test_create_bucketlist(self):
         """
