@@ -242,7 +242,7 @@ class BucketListItemResource(Resource):
             response = {"error": "No bucketlist item by that name exists"}
             return response, status.HTTP_400_BAD_REQUEST
         result = bucketlist_item_schema.dump(bucket_list_item).data
-        return result
+        return result, status.HTTP_200_OK
 
     @jwt_required
     def patch(self, bkt_id, id):
