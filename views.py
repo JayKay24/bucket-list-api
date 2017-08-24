@@ -336,12 +336,12 @@ class BucketListItemListResource(Resource):
         if bucketlist is None:
             response = {"error": "No bucketlist by that name exists"}
             return response, status.HTTP_404_NOT_FOUND
-        bucketlist_item = Bucketlist.query.filter_by(bkt_id=id).first()
+        bucketlist_item = Bucketlistitem.query.filter_by(id=id).first()
         if bucketlist_item is None:
             response = {"error": "No bucketlist by that name exists"}
             return response, status.HTTP_404_NOT_FOUND
         bucketlist_item_name = request_dict['bkt_item_name']
-        if request_dict['bkt_item_name'] == bucketlist_item.bkt_item_name:
+        if bucketlist_item_name == bucketlist_item.bkt_item_name:
             response = {
                 "error": "A bucketlist item with the same name already exists"}
             return response, status.HTTP_409_CONFLICT
