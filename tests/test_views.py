@@ -76,7 +76,7 @@ class ViewsTests(unittest.TestCase):
 
     def login_user(self, username, password):
         url = '/api/v1/auth/login/'
-        data = {username: 'username', password: 'password'}
+        data = {'username': username, 'password': password}
         response = self.test_client.post(
             url,
             headers=self.get_accept_content_type_headers(),
@@ -106,8 +106,8 @@ class ViewsTests(unittest.TestCase):
         """
         response = self.test_client.get(
             url_for('api.userlistresource', _external=True),
-            headers=self.get_authentication_headers()
-        )
+            headers=self.get_authentication_headers())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_bucketlist(self):
         """
