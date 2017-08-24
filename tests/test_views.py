@@ -79,7 +79,7 @@ class ViewsTests(unittest.TestCase):
         data = {username: 'username', password: 'password'}
         response = self.test_client.post(
             url,
-            headers=self.get_authentication_headers(),
+            headers=self.get_accept_content_type_headers(),
             data=json.dumps(data))
         return response
 
