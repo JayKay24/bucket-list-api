@@ -121,7 +121,7 @@ class BucketListResource(Resource):
         bucketlist_dict = request.get_json(force=True)
         if 'bkt_name' in bucketlist_dict:
             bucketlist_name = bucketlist_dict['bkt_name']
-            if Bucketlist.is_unique(id=id, bkt_name=bucketlist_name):
+            if bucketlist_name != bucketlist.bkt_name:
                 bucketlist.bkt_name = bucketlist_name
             else:
                 response = {
