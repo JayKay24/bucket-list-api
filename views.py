@@ -332,16 +332,20 @@ class BucketListItemListResource(Resource):
         if not request_dict:
             response = {'error': 'No input data provided'}
             return response, status.HTTP_400_BAD_REQUEST
-        # errors = bucketlist_item_schema.validate(request_dict)
-        # if errors:
-        #     return errors, status.HTTP_400_BAD_REQUEST
+        bucketlist = Bucketlist.query.filter_by(id=id).first()
+        if bucketlist is None:
+            response = {"error": "No bucketlist by that name exists"}
+            return response, status.HTTP_404_NOT_FOUND
+        bucketlist_item = Bucketlist.query.filter_by(bkt_id=id).first()
+        if bucketlist_item is None:
+            response = {"error": "No bucketlist by that name exists"}
+            return response, status.HTTP_404_NOT_FOUND
         bucketlist_item_name = request_dict['bkt_item_name']
-        if not Bucketlistitem.is_unique(id=0, bkt_item_name=bucketlist_item_name):
+        if request_dict['bkt_item_name'] == bucketlist_item.bkt_item_name:
             response = {
-                'error': 'A bucketlist item with the same name already exists'}
-            return response, status.HTTP_400_BAD_REQUEST
+                "error": "A bucketlist item with the same name already exists"}
+            return response, status.HTTP_409_CONFLICT
         try:
-            # bkt_name = request_dict['bkt_name']
             bucketlist = Bucketlist.query.filter_by(id=id).first()
             if bucketlist is None:
                 response = {"error": "No bucketlist with that name exists"}
