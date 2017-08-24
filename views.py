@@ -198,10 +198,10 @@ class BucketListListResource(Resource):
         if errors:
             return errors, status.HTTP_400_BAD_REQUEST
         bucketlist_name = request_dict['bkt_name']
-        if not Bucketlist.is_unique(id=0, bkt_name=bucketlist_name):
-            response = {
-                'error': 'A bucketlist with the same name already exists'}
-            return response, status.HTTP_400_BAD_REQUEST
+        # if not Bucketlist.is_unique(id=0, bkt_name=bucketlist_name):
+        #     response = {
+        #         'error': 'A bucketlist with the same name already exists'}
+        #     return response, status.HTTP_400_BAD_REQUEST
         try:
             claims = get_jwt_claims()
             user = User.query.filter_by(username=claims['username']).first()
@@ -285,7 +285,7 @@ class BucketListItemResource(Resource):
         """
         claims = get_jwt_claims()
         user = User.query.filter_by(username=claims['username']).first()
-        bucketlist = Bucketlist.query.filter_by(
+        bucketlist = Bucketlist.query.filter(
             Bucketlist.user_id == user.id).first()
         if bucketlist is None:
             response = {"error": "No bucketlist by that name exists"}
