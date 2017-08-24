@@ -262,7 +262,7 @@ class BucketListItemResource(Resource):
         if 'bkt_item_name' in bucketlist_item_dict:
             if bucketlist_item_dict['bkt_item_name'] == bucketlist_item.bkt_item_name:
                 response = {
-                    "A bucketlist item with the same name already exists"}
+                    "error": "A bucketlist item with the same name already exists"}
                 return response, status.HTTP_409_CONFLICT
             bucketlist_item.bkt_item_name = bucketlist_item_dict['bkt_item_name']
         # if 'bkt_name' in bucketlist_item_dict:
