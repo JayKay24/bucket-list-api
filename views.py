@@ -142,11 +142,11 @@ class BucketListResource(Resource):
             return resp, status.HTTP_400_BAD_REQUEST
 
     @jwt_required
-    def delete(self, bkt_id):
+    def delete(self, id):
         """
         Delete a bucketlist with the specified id.
         """
-        bucketlist = Bucketlist.query.filter_by(id=bkt_id).first()
+        bucketlist = Bucketlist.query.filter_by(id=id).first()
         if bucketlist is None:
             response = {"error": "No bucketlist by that name exists"}
             return response, status.HTTP_404_NOT_FOUND
