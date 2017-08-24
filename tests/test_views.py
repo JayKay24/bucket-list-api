@@ -60,9 +60,9 @@ class ViewsTests(unittest.TestCase):
             data=json.dumps(data))
         return response
 
-    def create_bucketlist_item(self, bkt_name, bkt_item_name):
+    def create_bucketlist_item(self, bkt_item_name):
         url = url_for('api.bucketlistitemlistresource', _external=True)
-        data = {'bkt_name': bkt_name, 'bkt_item_name': bkt_item_name}
+        data = {'bkt_item_name': bkt_item_name}
         response = self.test_client.post(
             url,
             headers=self.get_authentication_headers(self.test_user_name,
