@@ -48,7 +48,7 @@ class UserListResource(Resource):
             schema=user_schema
         )
         result = pagination_helper.paginate_query()
-        return result
+        return result, status.HTTP_200_OK
 
     def post(self):
         """
