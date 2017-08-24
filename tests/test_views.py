@@ -61,8 +61,7 @@ class ViewsTests(unittest.TestCase):
         data = {'bkt_name': bkt_name}
         response = self.test_client.post(
             url,
-            headers=self.get_authentication_headers(self.test_user_name,
-                                                    self.test_user_password),
+            headers=self.get_authentication_headers(),
             data=json.dumps(data))
         return response
 
@@ -71,8 +70,7 @@ class ViewsTests(unittest.TestCase):
         data = {'bkt_item_name': bkt_item_name}
         response = self.test_client.post(
             url,
-            headers=self.get_authentication_headers(self.test_user_name,
-                                                    self.test_user_password),
+            headers=self.get_authentication_headers(),
             data=json.dumps(data))
         return response
 
@@ -81,8 +79,7 @@ class ViewsTests(unittest.TestCase):
         data = {username: 'username', password: 'password'}
         response = self.test_client.post(
             url,
-            headers=self.get_authentication_headers(
-                self.test_user_name, self.test_user_password),
+            headers=self.get_authentication_headers(),
             data=json.dumps(data))
         return response
 
@@ -152,8 +149,7 @@ class ViewsTests(unittest.TestCase):
         data = {"bkt_name": new_bucketlist_name_2}
         patch_response = self.test_client.patch(
             new_bucketlist_url,
-            headers=self.get_authentication_headers(self.test_user_name,
-                                                    self.test_user_password),
+            headers=self.get_authentication_headers(),
             data=json.dumps(data))
         self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
 
@@ -178,7 +174,6 @@ class ViewsTests(unittest.TestCase):
         data = {"bkt_item_name": new_bucket_item_name_2}
         patch_response = self.test_client.patch(
             new_bucketl_item_url,
-            headers=self.get_authentication_headers(self.test_user_name,
-                                                    self.test_user_password),
+            headers=self.get_authentication_headers(),
             data=json.dumps(data))
         self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
