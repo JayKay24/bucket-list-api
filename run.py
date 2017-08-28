@@ -5,20 +5,20 @@ from app import create_app
 from flask_jwt_extended import JWTManager, create_access_token
 from views import authenticate
 from models import User
-# import views
+import views
 import status
 
 app = create_app('config')
-# jwt = JWTManager(app)
+jwt = JWTManager(app)
 
 # The logged in user credentials are needed to
 # access the current user's information.
 
 
-# @jwt.user_claims_loader
-# def add_claims_to_access_token(username):
-#     data = {'username': username}
-#     return data
+@jwt.user_claims_loader
+def add_claims_to_access_token(username):
+    data = {'username': username}
+    return data
 
 
 # @app.route('/api/v1/auth/login/', methods=['POST'])

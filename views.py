@@ -190,20 +190,22 @@ class BucketListListResource(Resource):
         """
         Create a new bucketlist.
         """
+        claims = get_jwt_claims()
         request_dict = request.get_json()
         if not request_dict:
             response = {'error': 'No input data provided'}
             return response, status.HTTP_400_BAD_REQUEST
-        errors = bucketlist_schema.validate(request_dict)
-        if errors:
-            return errors, status.HTTP_400_BAD_REQUEST
+        # errors = bucketlist_schema.validate(request_dict)
+        # if errors:
+        #     return errors, status.HTTP_400_BAD_REQUEST
         bucketlist_name = request_dict['bkt_name']
         # if not Bucketlist.is_unique(id=0, bkt_name=bucketlist_name):
         #     response = {
         #         'error': 'A bucketlist with the same name already exists'}
         #     return response, status.HTTP_400_BAD_REQUEST
         try:
-            claims = get_jwt_claims()
+            # claims = get_jwt_claims()
+            # print(claims)
             user = User.query.filter_by(username=claims['username']).first()
             bucketlist = Bucketlist(
                 bkt_name=bucketlist_name,
