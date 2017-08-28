@@ -291,8 +291,7 @@ class ViewsTests(unittest.TestCase):
         """
         Only an authorized user should be able to get a list of users.
         """
-        response_1 = self.create_user(
-            self.test_user_name, self.test_user_password)
+        response_1 = self.create_user("Anthony", "Stark832!")
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
         response_2 = self.create_user("Zack Snyder", "Justice832!")
         self.assertEqual(response_2.status_code, status.HTTP_201_CREATED)
