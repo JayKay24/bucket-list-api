@@ -179,3 +179,12 @@ class ViewsTests(unittest.TestCase):
             headers=self.authorization,
             data=json.dumps(data))
         self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
+
+    def test_delete_a_bucketlist(self):
+        """
+        An authenticated user should be able to delete a bucketlist.
+        """
+        bucketlist_name = "Extreme heights"
+        response = self.create_bucketlist(bucketlist_name)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        new_bucket_item_name_1 = "Low Level"
