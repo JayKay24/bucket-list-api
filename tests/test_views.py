@@ -305,3 +305,14 @@ class ViewsTests(unittest.TestCase):
         self.assertEqual(response_2.status_code, status.HTTP_201_CREATED)
         response_3 = self.get_a_list_of_users()
         self.assertEqual(response_3.status_code, status.HTTP_200_OK)
+
+    def test_get_a_bucketlist_item(self):
+        """
+        Only an authorized user should be able to get a bucketlist item.
+        """
+        response_1 = self.create_bucketlist("Extreme heights")
+        self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
+        response_2 = self.create_bucketlist_item(1, "Mount Everest")
+        self.assertEqual(response_2.status_code, status.HTTP_201_CREATED)
+        response_3 = self.get_a_bucketlist_item(1, 1)
+        self.assertEqual(response_3.status_code, status.HTTP_200_OK)
