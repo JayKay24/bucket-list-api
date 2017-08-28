@@ -106,7 +106,7 @@ class ViewsTests(unittest.TestCase):
         return response
 
     def get_a_bucketlist(self, id):
-        url = url_for('api.bucketlistresource', _external=True)
+        url = url_for('api.bucketlistresource', id=id, _external=True)
         response = self.test_client.get(
             url,
             headers=self.authorization)
