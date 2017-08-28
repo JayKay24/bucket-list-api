@@ -276,6 +276,6 @@ class ViewsTests(unittest.TestCase):
         response_1 = self.create_bucketlist_item(1, bucketlist_item_1)
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
         response_2 = self.create_bucketlist_item(1, bucketlist_item_2)
-        self.assertEqual(response_2.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_2.status_code, status.HTTP_201_CREATED)
         response_3 = self.get_a_list_of_bucketlist_items(1)
         self.assertEqual(response_3.status_code, status.HTTP_200_OK)
