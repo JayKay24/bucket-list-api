@@ -294,7 +294,7 @@ class ViewsTests(unittest.TestCase):
         response_1 = self.create_user(
             self.test_user_name, self.test_user_password)
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
-        response_2 = self.create_user("Zack Snyder")
+        response_2 = self.create_user("Zack Snyder", "Justice832!")
         self.assertEqual(response_2.status_code, status.HTTP_201_CREATED)
         response_3 = self.get_a_list_of_users()
         self.assertEqual(response_3.status_code, status.HTTP_200_OK)
