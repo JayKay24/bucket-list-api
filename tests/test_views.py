@@ -97,6 +97,14 @@ class ViewsTests(unittest.TestCase):
             headers=self.authorization)
         return response
 
+    def delete_bucketlist_item(self, bkt_id, bkt_item_id):
+        url = url_for('api.bucketlistitemresource',
+                      id=bkt_item_id, bkt_id=bkt_id, _external=True)
+        response = self.test_client.delete(
+            url,
+            headers=self.authorization)
+        return response
+
     def login_user(self, username, password):
         url = '/api/v1/auth/login/'
         data = {'username': username, 'password': password}
