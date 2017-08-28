@@ -162,15 +162,12 @@ class ViewsTests(unittest.TestCase):
         """
         An authenticated user should be able to create a bucketlist item.
         """
-        response = self.create_user(
-            self.test_user_name, self.test_user_password)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         bucketlist_name = "Extreme heights"
-        response = self.create_bucketlist(bucketlist_name, self.test_user_name)
+        response = self.create_bucketlist(bucketlist_name)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         new_bucket_item_name_1 = "Low Level"
-        post_response_1 = self.create_bucketlist_item(bucketlist_name,
-                                                      new_bucket_item_name_1)
+        post_response_1 = self.create_bucketlist_item(
+            1, new_bucket_item_name_1)
         self.assertEqual(post_response_1.status_code, status.HTTP_201_CREATED)
         post_response_data_1 = json.loads(
             post_response_1.get_data(as_text=True))
@@ -179,6 +176,6 @@ class ViewsTests(unittest.TestCase):
         data = {"bkt_item_name": new_bucket_item_name_2}
         patch_response = self.test_client.patch(
             new_bucketl_item_url,
-            headers=self.get_authentication_headers(),
+            headers=self.authorization,
             data=json.dumps(data))
         self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
