@@ -1,7 +1,10 @@
 import unittest
 import status
 from datetime import timedelta
-from flask_jwt_extended import create_access_token, JWTManager
+from flask_jwt_extended import (create_access_token, JWTManager,
+                                jwt_required, get_jwt_claims)
+# from flask_jwt_extended import (jwt_required, get_jwt_identity,
+#                                 get_jwt_claims)
 from app import create_app
 from flask import current_app, json, url_for
 from models import db, User
@@ -11,7 +14,13 @@ from views import authenticate
 class ViewsTests(unittest.TestCase):
     def setUp(self):
         self.app = create_app('test_config')
-        self.jwt = JWTManager(self.app)
+        # self.jwt = JWTManager(self.app)
+
+        # @self.jwt.user_claims_loader
+        # def add_claims_to_access_token(username):
+        #     data = {'username': username}
+        #     return data
+
         self.test_client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -19,6 +28,11 @@ class ViewsTests(unittest.TestCase):
         self.test_user_password = 'Kryptonian832!'
         db.create_all()
         self.create_user(self.test_user_name, self.test_user_password)
+        self.login_response = self.login_user(
+            self.test_user_name, self.test_user_password)
+        self.token = json.loads(self.login_response.data)['access_token']
+        self.authorization = {'Accept': 'application/json',
+                              'Content-Type': 'application/json', 'Authorization': str(self.token)}
 
     def tearDown(self):
         db.session.remove()
@@ -33,12 +47,11 @@ class ViewsTests(unittest.TestCase):
 
     def get_authentication_headers(self):
         authentication_headers = self.get_accept_content_type_headers()
-        response = self.login_user(
-            self.test_user_name, self.test_user_password)
-        response_data = json.loads(response.get_data(as_text=True))
-        authentication_headers['Authorization'] = 'Bearer ' + \
-            response_data['access_token']
-        print(authentication_headers)
+        # response = self.login_user(
+        #     self.test_user_name, self.test_user_password)
+        # response_data = json.loads(response.get_data(as_text=True))
+        authentication_headers['Authorization'] = 'Bearer ' + str(self.token)
+        # response_data['access_token']
         return authentication_headers
         # authenticated = authenticate(username, password)
         # if authenticated:
@@ -114,10 +127,17 @@ class ViewsTests(unittest.TestCase):
         """
         An authenticated user should be able to create a bucketlist.
         """
-        response = self.create_user(
-            self.test_user_name, self.test_user_password)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        url = url_for('api.bucketlistlistresource', _external=True)
+        data = {'bkt_name': 'Extreme heights'}
+        response = self.test_client.post(
+            url,
+            headers=self.get_authentication_headers(),
+            data=json.dumps(data))
+        # response_1 = self.create_user(
+        #     self.test_user_name, self.test_user_password)
+        # self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
         response = self.create_bucketlist("Extreme heights")
+        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_bucketlist_item(self):
