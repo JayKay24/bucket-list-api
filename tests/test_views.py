@@ -127,6 +127,13 @@ class ViewsTests(unittest.TestCase):
             headers=self.authorization)
         return response
 
+    def get_a_list_of_users(self):
+        url = url_for('api.userlistresource', _external=True)
+        response = self.test_client.get(
+            url,
+            headers=self.get_accept_content_type_headers())
+        return response
+
     def login_user(self, username, password):
         url = '/api/v1/auth/login/'
         data = {'username': username, 'password': password}
