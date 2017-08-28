@@ -195,4 +195,5 @@ class ViewsTests(unittest.TestCase):
         bucketlist_name = "Extreme heights"
         response = self.create_bucketlist(bucketlist_name)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        new_bucket_item_name_1 = "Low Level"
+        response = self.delete_bucketlist(1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
