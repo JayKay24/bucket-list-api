@@ -92,7 +92,7 @@ class ViewsTests(unittest.TestCase):
     def delete_bucketlist(self, bkt_id):
         url = url_for('api.bucketlistresource',
                       id=bkt_id, _external=True)
-        response = self.test_client.post(
+        response = self.test_client.delete(
             url,
             headers=self.authorization)
         return response
