@@ -56,17 +56,6 @@ class User(db.Model, AddUpdateDelete):
     def __init__(self, username):
         self.username = username
 
-    @classmethod
-    def is_unique(cls, id, name):
-        existing_user = cls.query.filter_by(name=name).first()
-        if existing_user is None:
-            return True
-        else:
-            if existing_user.id == id:
-                return True
-            else:
-                return False
-
 
 class UserSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
