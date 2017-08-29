@@ -16,11 +16,6 @@ def create_app(config_filename):
     app.config.from_object(config_filename)
     jwt = JWTManager(app)
 
-    # @jwt.user_claims_loader
-    # def add_claims_to_access_token(username):
-    #     data = {'username': username}
-    #     return data
-
     @app.route('/api/v1/auth/login/', methods=['POST'])
     def login():
         request_dict = request.get_json()
@@ -41,7 +36,7 @@ def create_app(config_filename):
                 # The subsequent requests after successfully generating
                 # an authentication token should be for only the logged
                 # in user.
-                claims = get_jwt_claims()
+                # claims = get_jwt_claims()
                 response = jsonify({"access_token": token})
                 return response, status.HTTP_200_OK
             else:
@@ -52,7 +47,3 @@ def create_app(config_filename):
     app.register_blueprint(api_bp, url_prefix='/api/v1')
 
     return app
-
-
-# app = create_app("config")
-# jwt = JWTManager(app)

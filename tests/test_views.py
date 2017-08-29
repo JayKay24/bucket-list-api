@@ -47,19 +47,6 @@ class ViewsTests(unittest.TestCase):
             'Content-Type': 'application/json'
         }
 
-    # def get_authentication_headers(self):
-    #     authentication_headers = self.get_accept_content_type_headers()
-    #     response_data = json.loads(response.get_data(as_text=True))
-    #     authentication_headers['Authorization'] = 'Bearer ' + str(self.token)
-    #     # response_data['access_token']
-    #     return authentication_headers
-    #     # authenticated = authenticate(username, password)
-    #     # if authenticated:
-    #     #     expiration_time = timedelta(hours=2)
-    #     #     token = create_access_token(
-    #     #         identity=username, expires_delta=expiration_time)
-    #     #     authentication_headers['Authorization'] = 'Bearer ' + str(token)
-
     def create_user(self, username, password):
         url = url_for('api.userlistresource', _external=True)
         data = {'username': username, 'password': password,
