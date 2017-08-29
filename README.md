@@ -40,16 +40,26 @@ git clone https://github.com/JayKay24/bucket-list-api.git
 ```
 
 ## Usage:
-         Register with the api
-         login to the api
-         Create a bucketlist
-         Update a bucketlist
-         View your bucketlist(s)
-         Delete your bucketlist
-         Create a bucketlist item
-         Update a bucketlist item
-         View a bucketlist item
-         Delete a bucketlist item
+    **POST api/v1/auth/register/**
+    * Register with the api
+    **POST api/v1/auth/login/**
+    * login to the api
+    **POST api/v1/bucketlists/**
+    * Create a bucketlist
+    **PATCH api/v1/bucketlists/<id>**
+    * Update a bucketlist
+    **GET api/v1/bucketlists/**
+    * View your bucketlist(s)
+    **DELETE api/v1/bucketlists/<id>**
+    * Delete your bucketlist
+    **POST api/v1/buckelists/<bkt_id>/bucketlistitems/**
+    * Create a bucketlist item
+    **PATCH api/v1/bucketlists/<bkt_id>/bucketlistitems/<id>**
+    * Update a bucketlist item
+    **GET api/v1/bucketlists/<bkt_id>/bucketlistitems/<id>**
+    * View a bucketlist item
+    **DELETE api/v1/bucketlists/<bkt_id>/bucketlistitems/<id>**
+    * Delete a bucketlist item
 
 ## Built using
 
