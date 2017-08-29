@@ -1,3 +1,7 @@
+"""
+This module contains all the views that used to build the bucketlist
+api including endpoints.
+"""
 import status
 from datetime import timedelta
 from flask import Blueprint, request, jsonify
