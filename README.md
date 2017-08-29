@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/JayKay24/bucket-list-api.svg?branch=develop)](https://travis-ci.org/JayKay24/bucket-list-api)
+
+[![Coverage Status](https://coveralls.io/repos/github/JayKay24/bucket-list-api/badge.svg?branch=develop)](https://coveralls.io/github/JayKay24/bucket-list-api?branch=develop)
+
 # Bucket List Creator API
 
 What would you like to do in the next few year? Climb a mountain? Learn to
