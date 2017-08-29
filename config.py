@@ -1,3 +1,7 @@
+"""
+This module contains all the configuration settings for the
+database used by the api.
+"""
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -12,5 +16,3 @@ SQLALCHEMY_DATABASE_URI = "postgresql://{DB_USER}:{DB_PASS}@{DB_ADDR}/{DB_NAME}"
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 PAGINATION_PAGE_SIZE = 5
 PAGINATION_PAGE_ARGUMENT_NAME = 'page'
-
-
