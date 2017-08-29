@@ -1,3 +1,7 @@
+"""
+This module contains all the models used to build the database
+tables.
+"""
 import re
 from marshmallow import Schema, fields, pre_load
 from marshmallow import validate
