@@ -1,3 +1,6 @@
+"""
+This module contains all the tests for the api endpoints.
+"""
 import unittest
 import status
 from datetime import timedelta
