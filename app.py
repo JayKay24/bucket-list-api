@@ -1,3 +1,7 @@
+"""
+This module is used to create an application instance using the
+configuration file passed in as a parameter.
+"""
 import status
 from datetime import timedelta
 from flask import Flask, request, jsonify
