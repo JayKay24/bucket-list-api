@@ -1,3 +1,7 @@
+"""
+This module contains all the functionality to include pagination
+in the api.
+"""
 from flask import url_for
 from flask import current_app
 
