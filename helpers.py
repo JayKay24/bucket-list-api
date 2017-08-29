@@ -1,5 +1,10 @@
+"""
+This module contains all the functionality to include pagination
+in the api.
+"""
 from flask import url_for
 from flask import current_app
+
 
 class PaginationHelper():
     def __init__(self, request, query, resource_for_url, key_name, schema):
@@ -13,22 +18,23 @@ class PaginationHelper():
 
     def paginate_query(self):
         # If no page number is specified, we assume the request wants page #1
-        page_number = self.request.args.get(self.page_argument_name, 1, type=int)
-        paginated_objects = self.query.paginate(page_number, 
-                per_page=self.results_per_page,
-                error_out=False)
+        page_number = self.request.args.get(
+            self.page_argument_name, 1, type=int)
+        paginated_objects = self.query.paginate(page_number,
+                                                per_page=self.results_per_page,
+                                                error_out=False)
         objects = paginated_objects.items
         if paginated_objects.has_prev:
             previous_page_url = url_for(
                 self.resource_for_url,
-                page=page_number-1,
+                page=page_number - 1,
                 _external=True)
         else:
             previous_page_url = None
         if paginated_objects.has_next:
             next_page_url = url_for(
                 self.resource_for_url,
-                page=page_number+1,
+                page=page_number + 1,
                 _external=True)
         else:
             next_page_url = None
@@ -37,5 +43,4 @@ class PaginationHelper():
                  'previous': previous_page_url,
                  'next': next_page_url,
                  'count': paginated_objects.total
-            })
-            
+                 })

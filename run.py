@@ -1,9 +1,28 @@
-from flask_jwt import JWT
+"""
+This is the entry point into the application.
+"""
+import json
+from datetime import timedelta
+from flask import request, jsonify
 from app import create_app
-from views import authenticate, identity
+from flask_jwt_extended import JWTManager, create_access_token
+from views import authenticate
+from models import User
+import views
+import status
 
 app = create_app('config')
-# jwt = JWT(app, authenticate, identity)
+jwt = JWTManager(app)
+
+# The logged in user credentials are needed to
+# access the current user's information.
+
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(username):
+    data = {'username': username}
+    return data
+
 
 if __name__ == '__main__':
     app.run(host=app.config['HOST'],
