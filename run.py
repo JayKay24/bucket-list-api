@@ -1,3 +1,6 @@
+"""
+This is the entry point into the application.
+"""
 import json
 from datetime import timedelta
 from flask import request, jsonify
