@@ -1,3 +1,9 @@
+"""
+This module contains the status codes to be leveraged by
+the http responses.
+"""
+
+
 def is_informational(code):
     return code >= 100 and code <= 199
 
