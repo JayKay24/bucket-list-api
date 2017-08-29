@@ -40,7 +40,6 @@ def create_app(config_filename):
                 # The subsequent requests after successfully generating
                 # an authentication token should be for only the logged
                 # in user.
-                # claims = get_jwt_claims()
                 response = jsonify({"access_token": token})
                 return response, status.HTTP_200_OK
             else:
