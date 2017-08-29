@@ -1,3 +1,7 @@
+"""
+This module contains all the configuration settings used by the
+test database for the api.
+"""
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
