@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/JayKay24/bucket-list-api.svg?branch=develop)](https://travis-ci.org/JayKay24/bucket-list-api)
+
 # Bucket List Creator API
 
 What would you like to do in the next few year? Climb a mountain? Learn to
