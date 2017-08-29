@@ -40,6 +40,7 @@ git clone https://github.com/JayKay24/bucket-list-api.git
 ```
 
 ## Usage:
+
     **POST api/v1/auth/register/**
     * Register with the api
     **POST api/v1/auth/login/**
