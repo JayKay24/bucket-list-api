@@ -30,8 +30,11 @@ def create_app(config_filename):
 
         if authenticate(username, password):
             user = User.query.filter_by(username=username).first()
+            print("Starting now")
+            print(user)
             if user is None:
-                response = jsonify({"error": "No user by that name exists"})
+                print("Inside here")
+                response = jsonify({'error': 'No user by that name exists'})
                 return response, status.HTTP_400_BAD_REQUEST
             if user.verify_password(password):
                 # The token should be valid for at least 2 hours to
@@ -47,6 +50,9 @@ def create_app(config_filename):
             else:
                 response = jsonify({'error': 'Incorrect password'})
                 return response, status.HTTP_400_BAD_REQUEST
+        else:
+            response = jsonify({'error': 'No user by that name exists'})
+            return response, status.HTTP_404_NOT_FOUND
 
     db.init_app(app)
     app.register_blueprint(api_bp, url_prefix='/api/v1')
