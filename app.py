@@ -5,6 +5,7 @@ configuration file passed in as a parameter.
 import status
 from datetime import timedelta
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_claims
 from models import db, User
 import views
@@ -19,6 +20,7 @@ def create_app(config_filename):
     app = Flask(__name__)
     app.config.from_object(config_filename)
     jwt = JWTManager(app)
+    CORS(app)
 
     @app.route('/api/v1/auth/login/', methods=['POST'])
     def login():
