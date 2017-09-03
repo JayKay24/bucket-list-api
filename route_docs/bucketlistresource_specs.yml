@@ -1,0 +1,21 @@
+"""
+A single bucketlist
+---
+tags:
+  - bucketlist
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: The ID of a single bucketlist
+    type: string
+responses:
+  200:
+    description: A single bucketlist
+    schema:
+      id: Bucketlist
+      properties:
+        task:
+          type: json
+          default: Extreme heights
+"""
