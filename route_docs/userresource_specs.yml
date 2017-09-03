@@ -1,0 +1,21 @@
+"""
+Retrieves a paginated result set of users.
+---
+tags:
+  - bucketlist
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: The ID of a single user
+    type: string
+responses:
+  200:
+    description: A list of users
+    schema:
+      id: User
+      properties:
+        user:
+          type: string
+          default: James
+"""

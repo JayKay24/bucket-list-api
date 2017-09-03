@@ -4,6 +4,7 @@ api including endpoints.
 """
 import status
 from datetime import timedelta
+from flasgger import swag_from
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
 from models import (db, User, UserSchema, Bucketlist,
