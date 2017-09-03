@@ -1,9 +1,8 @@
 language: python
 python:
-- "3.6.1"
-cache: pip
+- "3.5.2"
 install:
-- pip install -r requirements.txt
+- pip3 install -r requirements.txt
 services:
 - postgresql
 before_script:
