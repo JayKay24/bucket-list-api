@@ -33,6 +33,7 @@ api = Api(api_bp)
 
 
 class UserResource(Resource):
+    @swag_from('route_docs/userresource_specs.yml', methods=['GET'])
     def get(self, id):
         user = User.query.get_or_404(id)
         result = user_schema.dump(user).data
