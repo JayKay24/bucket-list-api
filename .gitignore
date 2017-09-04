@@ -1,4 +1,5 @@
 *.pyc
 .coverage
+.vscode/*
 __pycache__/*
 tests/__pycache__/*

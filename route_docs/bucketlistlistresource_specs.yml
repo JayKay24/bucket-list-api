@@ -1,0 +1,15 @@
+"""
+A list of users
+---
+tags:
+  - bucketlist item
+parameters:
+  - in: path
+    name: id
+    required: true
+    description: A list of bucketlist items
+    type: string
+responses:
+  200:
+    description: A list of bucketlists
+"""

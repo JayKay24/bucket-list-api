@@ -4,6 +4,7 @@ api including endpoints.
 """
 import status
 from datetime import timedelta
+from flasgger import swag_from
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
 from models import (db, User, UserSchema, Bucketlist,
@@ -32,6 +33,7 @@ api = Api(api_bp)
 
 
 class UserResource(Resource):
+    @swag_from('route_docs/userresource_specs.yml', methods=['GET'])
     def get(self, id):
         user = User.query.get_or_404(id)
         result = user_schema.dump(user).data
@@ -39,6 +41,7 @@ class UserResource(Resource):
 
 
 class UserListResource(Resource):
+    @swag_from('route_docs/userlistresource_specs.yml', methods=['GET'])
     @jwt_required
     def get(self):
         """
@@ -99,6 +102,7 @@ class UserListResource(Resource):
 
 class BucketListResource(Resource):
     @jwt_required
+    @swag_from('route_docs/bucketlistresource_specs.yml', methods=['GET'])
     def get(self, id):
         """
         Retrieve a bucketlist with the specified id.
@@ -315,6 +319,7 @@ class BucketListItemResource(Resource):
 
 class BucketListItemListResource(Resource):
     @jwt_required
+    @swag_from('route_docs/bucketlistlistresource_specs.yml')
     def get(self, id):
         """
         Retrieve a paginated set of bucketlist items.
