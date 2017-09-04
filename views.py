@@ -207,6 +207,9 @@ class BucketListListResource(Resource):
         # if errors:
         #     return errors, status.HTTP_400_BAD_REQUEST
         bucketlist_name = request_dict['bkt_name']
+        if not bucketlist_name:
+            response = {'error': 'No input data provided'}
+            return response, status.HTTP_400_BAD_REQUEST
         # if not Bucketlist.is_unique(id=0, bkt_name=bucketlist_name):
         #     response = {
         #         'error': 'A bucketlist with the same name already exists'}
