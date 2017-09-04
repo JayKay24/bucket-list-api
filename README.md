@@ -10,6 +10,8 @@ what you are yet to achieve.
 Bucket List Creator allows you to register and achieve all these feats and
 also allow you to tick off what you have done.
 
+Please find the link to the online api here: https://bucket-list-api-postgres.herokuapp.com/api/v1/auth/register/
+
 ### Prerequisites
 
 The requirements are defined in the requirments file
