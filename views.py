@@ -319,6 +319,7 @@ class BucketListItemResource(Resource):
 
 class BucketListItemListResource(Resource):
     @jwt_required
+    @swag_from('route_docs/bucketlistlistresource_specs.yml')
     def get(self, id):
         """
         Retrieve a paginated set of bucketlist items.
