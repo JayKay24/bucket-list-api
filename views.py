@@ -41,6 +41,7 @@ class UserResource(Resource):
 
 
 class UserListResource(Resource):
+    @swag_from('route_docs/userlistresource_specs.yml', methods=['GET'])
     @jwt_required
     def get(self):
         """
@@ -101,6 +102,7 @@ class UserListResource(Resource):
 
 class BucketListResource(Resource):
     @jwt_required
+    @swag_from('route_docs/bucketlistresource_specs.yml', methods=['GET'])
     def get(self, id):
         """
         Retrieve a bucketlist with the specified id.
